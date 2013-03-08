@@ -1,0 +1,14 @@
+syntax: glob
+*.o
+*.depend
+*.res
+*.deb
+*.tar.gz
+config-debug.sh
+make-*
+makefile
+*.bat
+bin/*
+obj/*
+dist/linux/usr/bin/*
+dist/winnt/ffmpegyag/FFmpegYAG*

@@ -1,0 +1,78 @@
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=ffmpegyag
+base_path=./
+description=FFmpeg Encoding GUI using wxGTK
+file_patterns=*;
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=3
+FILE_NAME_0=9919;C;0;16;1;1;0;.%2Fsrc%2FAVConvGUIMain.h;0;4
+FILE_NAME_1=121317;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.cpp;0;4
+FILE_NAME_2=2223;C;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingFileLoader.h;0;4
+FILE_NAME_3=31006;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingFileLoader.cpp;0;4
+
+[VTE]
+last_dir=/home/ronny/Documents/development/ffmpegyag
+
+[build-menu]
+NF_00_LB=Make All
+NF_00_CM=make BUILD=debug
+NF_00_WD=%p
+NF_01_LB=Make Custom
+NF_01_CM=make BUILD=debug 
+NF_01_WD=%p
+NF_02_LB=Make Object
+NF_02_CM=make %d/%f.o BUILD=debug
+NF_02_WD=%p
+NF_03_LB=Make Clean
+NF_03_CM=make clean BUILD=debug
+NF_03_WD=
+EX_00_LB=_Execute
+EX_00_CM=%p/bin/ffmpegyag-dbg
+EX_00_WD=%p/bin
+filetypes=C++;C;
+C++FT_00_LB=_Compile
+C++FT_00_CM=make %d/%f.o BUILD=debug
+C++FT_00_WD=%p
+CFT_00_LB=_Compile
+CFT_00_CM=make %d/%e.cpp.o
+CFT_00_WD=%p
+CFT_01_LB=_Build All
+CFT_01_CM=make
+CFT_01_WD=%p
+CFT_02_LB=Clean
+CFT_02_CM=make clean
+CFT_02_WD=%p
+C++FT_01_LB=_Build All
+C++FT_01_CM=make BUILD=debug
+C++FT_01_WD=%p
+C++FT_02_LB=Clean
+C++FT_02_CM=make clean BUILD=debug
+C++FT_02_WD=%p
+EX_01_LB=Execute Debug
+EX_01_CM=%p/dist/linux/usr/bin/ffmpegyag
+EX_01_WD=%p/dist/linux/usr/bin
+
+[gproject]
+source_patterns=*.c;*.C;*.cpp;*.cxx;*.c++;*.cc;
+header_patterns=*.h;*.H;*.hpp;*.hxx;*.h++;*.hh;*.m;
+ignored_dirs_patterns=.*;CVS;
+generate_tags=true

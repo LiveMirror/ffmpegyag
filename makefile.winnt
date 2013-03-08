@@ -1,0 +1,77 @@
+
+
+PKGNAME = ffmpegyag
+PKGVERSION = 0.6.0
+PKGSECTION = video
+PKGAUTHOR =Ronny Wegener <wegener.ronny@gmail.com>
+PKGHOMEAGE = http://ffmpegyag.googlecode.com
+PKGDEPENDS = 
+PKGDESCRIPTION = A GTK based GUI for ffmpeg\n\
+ FFmpegYAG is a GUI for the popular FFmpeg audio/video encoding tool\n\
+ .
+
+CD = $(subst /,\,$(CURDIR))
+
+SRCDIR = src
+SRCFILES := $(patsubst $(CD)\\%,%,$(shell dir /b /s /a-d $(SRCDIR)\\*.cpp 2> NUL))
+
+RCDIR = $(SRCDIR)
+RCFILES := $(patsubst $(CD)\\%,%,$(shell dir /b /s /a-d $(SRCDIR)\\*.rc 2> NUL))
+
+OBJDIR = obj
+OBJFILES := $(patsubst $(SRCDIR)\\%,$(OBJDIR)\\%.o,$(SRCFILES))
+RCOBJFILES := $(patsubst $(SRCDIR)\\%,$(OBJDIR)\\%o,$(RCFILES))
+
+DISTROOT = dist\winnt
+DISTFILES := $(patsubst $(CD)\$(DISTROOT)\\%,%,$(shell dir /b /s /a-d $(DISTROOT) 2> NUL))
+DISTDIRECTORIES := $(patsubst $(CD)\$(DISTROOT)\\%,%,$(shell dir /b /s /ad $(DISTROOT) 2> NUL))
+
+BINFILE = dist\winnt\ffmpegyag\FFmpegYAG.exe
+
+CC = mingw32-g++.exe
+CFLAGS = -pipe -mthreads -O2 -I$(WXDIR)\include -I$(WXDIR)\contrib\include -I$(WXDIR)\lib\gcc_lib\mswu -Iinclude\winnt\ffmpeg -D__GNUWIN32__ -D__WXMSW__ -DwxUSE_UNICODE
+
+RC = windres.exe
+RCFLAGS = -I$(WXDIR)\include -I$(WXDIR)\contrib\include -I$(WXDIR)\lib\gcc_lib\mswu -Iinclude\winnt\ffmpeg -J rc -O coff
+
+LD = mingw32-g++.exe
+LDFLAGS = -L$(WXDIR)\lib\gcc_lib -Llib\winnt\ffmpeg -lwxmsw28u -lwxmsw28u_gl -lwxpng -lwxjpeg -lwxtiff -lwxzlib -lavformat -lavcodec -lswscale -lavutil -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lcomctl32 -lwsock32 -lodbc32 -s -mthreads -static-libgcc -static-libstdc++ -mwindows -lopengl32
+
+all: $(BINFILE)
+	
+$(BINFILE): $(OBJFILES) $(RCOBJFILES)
+	@echo.
+	@$(shell mkdir $(dir $@) 2> NUL)
+	$(LD) $^ $(LDFLAGS) -o $@
+
+$(OBJDIR)\\%.rco: $(SRCDIR)\%.rc
+	@echo.
+	@$(shell mkdir $(dir $@) 2> NUL)
+	$(RC) $(RCFLAGS) -i $< -o $@
+
+$(OBJDIR)\\%.o: $(SRCDIR)\%
+	@echo.
+	@$(shell mkdir $(dir $@) 2> NUL)
+	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -MM -MT $@ $< >> $(OBJDIR)\$*.depend
+
+# ***INTERNAL: readdir: No such file or directory
+# . Stop.
+# \path\file.depend: Field 'stem' not cached: file.depend
+
+#-include $(patsubst %.o,%.depend,$(OBJFILES))
+
+clean:
+	@del $(patsubst %.o,%.depend,$(OBJFILES)) $(OBJFILES) $(RCOBJFILES) $(BINFILE) 2> NUL
+
+install:
+	@echo.
+	@echo installing...
+
+uninstall:
+	@echo.
+	@echo $(DISTFILES)
+
+iss:
+	@echo.
+	@echo creating installer...
