@@ -142,8 +142,14 @@ check_config()
 			return 1
 		fi
 	else
-		echo "$AF_RED invalid directory $AF_RESET"
-		return 1
+		#mkdir -p "$SRCDIR"
+		#if [ -d "$SRCDIR" ]
+		#then
+		#	
+		#else
+			echo "$AF_RED invalid directory $AF_RESET"
+			return 1
+		#fi
 	fi
 
 	echo -n "  checking object directory ($OBJDIR) ... "
@@ -151,8 +157,14 @@ check_config()
 	then
 		echo "$AF_GREEN ok $AF_RESET"
 	else
-		echo "$AF_RED invalid directory $AF_RESET"
-		return 1
+		mkdir -p "$OBJDIR"
+		if [ -d "$OBJDIR" ]
+		then
+			echo "$AF_YELLOW not found $AF_RESET -> $AF_GREEN created $AF_RESET"
+		else
+			echo "$AF_RED invalid directory $AF_RESET"
+			return 1
+		fi
 	fi
 
 	BINPATH=$(echo $BINFILE | sed -e 's|/[^/]*$||g')
@@ -161,8 +173,14 @@ check_config()
 	then
 		echo "$AF_GREEN ok $AF_RESET"
 	else
-		echo "$AF_RED invalid path $AF_RESET"
-		return 1
+		mkdir -p "$BINPATH"
+		if [ -d "$BINPATH" ]
+		then
+			echo "$AF_YELLOW not found $AF_RESET -> $AF_GREEN created $AF_RESET"
+		else
+			echo "$AF_RED invalid path $AF_RESET"
+			return 1
+		fi
 	fi
 
 	echo -n "  checking distribution root ($DISTROOT) ... "
@@ -178,8 +196,14 @@ check_config()
 			DISTROOT=""
 		fi
 	else
-		echo "$AF_YELLOW invalid directory $AF_RESET -> $AF_GREEN ignored $AF_RESET"
-		DISTROOT=""
+		#mkdir -p "$DISTROOT"
+		#if [ -d "$DISTROOT" ]
+		#then
+		#	echo "$AF_YELLOW not found $AF_RESET -> $AF_GREEN created $AF_RESET"
+		#else
+			echo "$AF_YELLOW invalid directory $AF_RESET -> $AF_GREEN ignored $AF_RESET"
+			DISTROOT=""
+		#fi
 	fi
 
 	echo -n "  checking compiler ($CC) ... "
@@ -237,14 +261,14 @@ write_makefile_rule_build()
 	echo "\$(BINFILE): \$(OBJFILES)" >> makefile
 	echo "		@echo " >> makefile
 	echo "		@\$(shell mkdir -p \$(dir \$@))" >> makefile
-	echo "		\$(LD) \$^ \$(LDFLAGS) -o \$@" >> makefile
+	echo "		\$(LD) \$(LDFLAGS) -o \$@ \$^ \$(LDLIBS)" >> makefile
 	echo "" >> makefile
 	echo "\$(CURDIR)/\$(OBJDIR)/%.o \$(CURDIR)/\$(SRCDIR)/%.o \$(SRCDIR)/%.o: \$(OBJDIR)/%.o" >> makefile
 	echo "		" >> makefile
 	echo "\$(OBJDIR)/%.o: \$(SRCDIR)/%" >> makefile
 	echo "		@echo " >> makefile
 	echo "		@\$(shell mkdir -p \$(dir \$@))" >> makefile
-	echo "		\$(CC) \$(CFLAGS) -c \$< -o \$@" >> makefile
+	echo "		\$(CC) \$(CFLAGS) -o \$@ \$<" >> makefile
 	echo "		@gcc \$(CFLAGS) -MM -MT \$@ \$< >> \$(OBJDIR)/\$*.depend" >> makefile
 	echo "" >> makefile
 	echo "-include \$(OBJFILES:.o=.depend)" >> makefile
@@ -254,8 +278,9 @@ write_makefile_rule_build()
 write_makefile_rule_clean()
 {
 	echo "clean:" >> makefile
-	echo "		@find \$(OBJDIR) -type f -delete" >> makefile
-	echo "		@rm -f \$(BINFILE)" >> makefile
+	#echo "		@find \$(OBJDIR) -type f -delete" >> makefile
+	#echo "		@rm -f \$(BINFILE)" >> makefile
+	echo "		@rm -f \$(OBJFILES) \$(OBJFILES:.o=.depend) \$(BINFILE)" >> makefile
 	echo "" >> makefile
 }
 
@@ -368,6 +393,7 @@ create_makeconf()
 	echo "CFLAGS = $(echo $CFLAGS | sed -e 's|[ ]+| |g')" >> $MAKECONF
 	echo "LD = $LD" >> $MAKECONF
 	echo "LDFLAGS = $(echo $LDFLAGS | sed -e 's|[ ]+| |g')" >> $MAKECONF
+	echo "LDLIBS = $(echo $LDLIBS | sed -e 's|[ ]+| |g')" >> $MAKECONF
 }
 
 ######################################
@@ -395,7 +421,7 @@ then
 
 	write_makefile_header
 
-	for CONFIGSCRIPT in $(find -type f -name 'config-*')
+	for CONFIGSCRIPT in $(find -maxdepth 1 -type f -name 'config-*')
 	do
 		echo 
 		echo "Configuration Script: $CONFIGSCRIPT"
