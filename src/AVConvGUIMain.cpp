@@ -506,7 +506,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
 
 	ComboBoxFileFormat->SetValue(wxT("matroska"));
 	ComboBoxVideoCodec->SetValue(wxT("libx264"));
-	ComboBoxAudioCodec->SetValue(wxT("libmp3lame"));
+	ComboBoxAudioCodec->SetValue(wxT("aac"));
 	ComboBoxSubtitleCodec->SetValue(wxT("copy"));
     EnableDisableAVFormatControls();
 }
@@ -2755,6 +2755,12 @@ bool AVConvGUIFrame::VerifySettings()
     {
         for(size_t f=0; f<EncodingTasks[t]->InputFiles.GetCount(); f++)
         {
+			if(EncodingTasks[t]->OutputFile.GetFullPath() == EncodingTasks[t]->InputFiles[f]->File.GetFullPath())
+			{
+				warning.Append(wxString::Format(wxT("\nTask %lu[%lu]: target filename equals source filename..."), (unsigned long)t, (unsigned long)f));
+				//warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: audio frequency not supported in flv (max. 44100)!"), (unsigned long)t, (unsigned long)f, (unsigned long)a));
+			}
+
             for(size_t v=0; v<EncodingTasks[t]->InputFiles[f]->VideoStreams.GetCount(); v++)
             {
                 if(EncodingTasks[t]->InputFiles[f]->VideoStreams[v]->Enabled)

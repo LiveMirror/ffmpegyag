@@ -709,6 +709,7 @@ VideoFrame* EncodingFileLoader::GetVideoFrameData(long VideoStreamIndex, long Fr
                 av_free_packet(&packet);
             }
 
+/*
 if(FrameTimestamp < Timestamp)
 {
 	AVFrame *pFrameDecoded = avcodec_alloc_frame();
@@ -739,7 +740,7 @@ if(FrameTimestamp < Timestamp)
 		if(got_frame)
 		{
 			FrameTimestamp = pFrameSource->pkt_pts;
-			/*
+
 			// exclude b-frames that belongs to the previous gop, but where ordered after i-frame from this gop (higher dts but lower pts)
 			// first frame in gop must be i-frame
 			if(GOPBuffer.GetCount() > 0 || pFrameSource->pict_type == 1)
@@ -767,7 +768,7 @@ if(FrameTimestamp < Timestamp)
 			{
 				//printf("skipped (%i), packet-pts: %lu, requested-pts: %lu, frame-pts: %lu\n", pFrameSource->pict_type, packet.pts, Timestamp, pFrameSource->pkt_pts);
 			}
-			*/
+
 			printf("  USE EMPTY PACKET => frame.pts=%lu\n", pFrameSource->pkt_pts);
 		}
 		else
@@ -776,6 +777,7 @@ if(FrameTimestamp < Timestamp)
 		}
 	}
 }
+*/
 			sws_freeContext(pSwsCtx);
             av_free(Buffer);
         }
