@@ -321,18 +321,18 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     FlexGridSizerVideo->Add(StaticText13, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     ComboBoxVideoBitrate = new wxComboBox(this, ID_COMBOBOX8, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX8"));
     ComboBoxVideoBitrate->Append(_("default"));
-    ComboBoxVideoBitrate->Append(_("400k"));
     ComboBoxVideoBitrate->Append(_("800k"));
+    ComboBoxVideoBitrate->Append(_("1000k"));
     ComboBoxVideoBitrate->Append(_("1200k"));
     ComboBoxVideoBitrate->Append(_("1400k"));
-    ComboBoxVideoBitrate->Append(_("1600k"));
     ComboBoxVideoBitrate->SetSelection( ComboBoxVideoBitrate->Append(_("1800k")) );
-    ComboBoxVideoBitrate->Append(_("2000k"));
-    ComboBoxVideoBitrate->Append(_("2500k"));
-    ComboBoxVideoBitrate->Append(_("3000k"));
+    ComboBoxVideoBitrate->Append(_("2400k"));
+    ComboBoxVideoBitrate->Append(_("3200k"));
     ComboBoxVideoBitrate->Append(_("4000k"));
-    ComboBoxVideoBitrate->Append(_("6000k"));
-    ComboBoxVideoBitrate->Append(_("8000k"));
+    ComboBoxVideoBitrate->Append(_("-crf 24"));
+    ComboBoxVideoBitrate->Append(_("-crf 22"));
+    ComboBoxVideoBitrate->Append(_("-crf 20"));
+    ComboBoxVideoBitrate->Append(_("-crf 18"));
     FlexGridSizerVideo->Add(ComboBoxVideoBitrate, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticText14 = new wxStaticText(this, ID_STATICTEXT15, _("Frame Size:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT15"));
     StaticText14->Disable();
@@ -2757,8 +2757,7 @@ bool AVConvGUIFrame::VerifySettings()
         {
 			if(EncodingTasks[t]->OutputFile.GetFullPath() == EncodingTasks[t]->InputFiles[f]->File.GetFullPath())
 			{
-				warning.Append(wxString::Format(wxT("\nTask %lu[%lu]: target filename equals source filename..."), (unsigned long)t, (unsigned long)f));
-				//warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: audio frequency not supported in flv (max. 44100)!"), (unsigned long)t, (unsigned long)f, (unsigned long)a));
+				warning.Append(wxString::Format(wxT("\nTask %lu[%lu]: target filename equals source filename!"), (unsigned long)t, (unsigned long)f));
 			}
 
             for(size_t v=0; v<EncodingTasks[t]->InputFiles[f]->VideoStreams.GetCount(); v++)
@@ -2766,13 +2765,29 @@ bool AVConvGUIFrame::VerifySettings()
                 if(EncodingTasks[t]->InputFiles[f]->VideoStreams[v]->Enabled)
                 {
                     vSettings = &(EncodingTasks[t]->InputFiles[f]->VideoStreams[v]->EncodingSettings);
+                    
+                    if(vSettings->Bitrate.StartsWith(wxT("-crf")))
+                    {
+						if(!vSettings->Codec.IsSameAs(wxT("libx264")))
+						{
+							warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: constant quality (-crf) only available for libx264 codec!"), (unsigned long)t, (unsigned long)f, (unsigned long)v));
+						}
+					}
+					
+					if(EncodingTasks[t]->OutputFormat.IsSameAs(wxT("webm")))
+                    {
+						if(!vSettings->Codec.IsSameAs(wxT("libvpx")))
+						{
+							warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: only libvpx video codec is supported in webm format!"), (unsigned long)t, (unsigned long)f, (unsigned long)v));
+						}
+					}
 
 					/*
 					if(EncodingTasks[t]->OutputFormat.IsSameAs(wxT("flv")))
                     {
 						if(vSettings->Codec->IsSameAs(wxT("mpeg4")))
 						{
-							// video codec not compatible with flv
+							warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: mpeg4 codev not compatible with flv container!"), (unsigned long)t, (unsigned long)f, (unsigned long)v));
 						}
 					}
 					*/
@@ -2786,6 +2801,14 @@ bool AVConvGUIFrame::VerifySettings()
                 if(EncodingTasks[t]->InputFiles[f]->AudioStreams[a]->Enabled)
                 {
                     aSettings = &(EncodingTasks[t]->InputFiles[f]->AudioStreams[a]->EncodingSettings);
+
+					if(EncodingTasks[t]->OutputFormat.IsSameAs(wxT("webm")))
+                    {
+						if(!aSettings->Codec.IsSameAs(wxT("libvorbis")))
+						{
+							warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: only libvorbis audio codec is supported in webm format!"), (unsigned long)t, (unsigned long)f, (unsigned long)a));
+						}
+					}
 
                     /*
                     if(EncodingTasks[t]->OutputFormat.IsSameAs(wxT("flv")))

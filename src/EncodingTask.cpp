@@ -330,7 +330,14 @@ wxString EncodingTask::GetCommandAVConv(wxString OutputFileName, wxString StartT
                         {
                             if(!InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate.IsEmpty())
                             {
-                                Command.Append(wxString::Format(wxT(" -b:v:%i ") + InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate, vid_count));
+								if(InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate.StartsWith(wxT("-crf")))
+								{
+									Command.Append(wxString::Format(wxT(" ") + InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate));
+								}
+								else
+								{
+									Command.Append(wxString::Format(wxT(" -b:v:%i ") + InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate, vid_count));
+								}
                             }
                             if(!InputFiles[f]->VideoStreams[v]->EncodingSettings.FrameRate.IsEmpty())
                             {
