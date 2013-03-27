@@ -14,8 +14,8 @@ VideoSettings::VideoSettings()
     PreMotionEstimationComparsion = wxT("rd");
     SubMotionEstimationComparsion = wxT("rd");
     Trellis = true;
-    MinQuantization = wxT("1");
-    MaxQuantization = wxT("31");
+    MinQuantization = wxEmptyString;
+    MaxQuantization = wxEmptyString;
     QPEL = false;
     GMC = false;
     Crop[0] = 0;
