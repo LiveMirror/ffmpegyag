@@ -764,6 +764,8 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
 
         if(MediaFlags & AVMEDIA_FLAG_VIDEO)
         {
+			// TODO: apply settings from selected task[t].FileIn[f].VideoStream[v].Codec ...
+
             SpinCtrlTop->Enable();
             SpinCtrlLeft->Enable();
             SpinCtrlBottom->Enable();
@@ -848,9 +850,19 @@ void AVConvGUIFrame::OnButtonAddTaskClick(wxCommandEvent& event)
         int left = SpinCtrlLeft->GetValue();
         int right = SpinCtrlRight->GetValue();
 
+        size_t InsertIndex;
+        bool HadSelectedTasks = false;
+        UpdateSelectedTaskIndices();
+        if(SelectedTaskIndices.GetCount() > 0)
+		{
+			HadSelectedTasks = true;
+		}
+		// TODO: chenge selection behaviour on new added tasks
+		// never select a new added tasks
+		// HadSelectedTasks = true;
+
         ListCtrlTasks->Freeze();
 
-        size_t InsertIndex;
         for(size_t i=0; i<SourceFiles.GetCount(); i++)
         {
             SourceFile = wxFileName(SourceFiles[i]);
@@ -991,6 +1003,14 @@ void AVConvGUIFrame::OnButtonAddTaskClick(wxCommandEvent& event)
                     EncTask->InputFiles.Add(InputFile);
                     EncodingTasks.Add(EncTask);
                     EncTask = NULL;
+                    
+					if(!HadSelectedTasks)
+					{
+						ListCtrlTasks->SetItemState(InsertIndex, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+						// TODO: chenge selection behaviour on new added tasks
+						// only select first new added tasks
+						// HadSelectedTasks = true;
+					}
                 }
                 else
                 {
@@ -1749,11 +1769,12 @@ void AVConvGUIFrame::OnComboBoxFileFormatSelect(wxCommandEvent& event)
         TaskIndex = SelectedTaskIndices[0];
         // update modified fileout in textctrl (without trigger event)
         TextCtrlFileOut->ChangeValue(EncodingTasks[TaskIndex]->OutputFile.GetFullPath());
-    }
 
-    // FIXME: load settings for re-enabled controls
-    // i.e. when selecteing audio format -> video codec blanked
-    // when re-select video format -> video codec stay blank
+        // FIXME: load settings for re-enabled controls
+		// i.e. when selecteing audio format -> video codec blanked
+		// when re-select video format -> video codec stay blank
+		// -> see also EnableDisableAVFormatControls()
+    }
 
     //wxMessageBox(wxT("FileFormat Changed"));
 }
@@ -2703,18 +2724,27 @@ wxInt32 ffGUIFrame::Verify(VideoIO *videoReader, EncodingJob *encodingJob)
 bool AVConvGUIFrame::VerifySettings()
 {
     wxString warning = wxEmptyString;
+    wxString warning_prefix = wxEmptyString;
 
     VideoSettings* vSettings;
     AudioSettings* aSettings;
     SubtitleSettings* sSettings;
 
+    wxArrayString supported_codecs;
+	wxString selected_codec = wxEmptyString;
+	bool codec_supported = false;
+
     for(size_t t=0; t<EncodingTasks.GetCount(); t++)
     {
+		warning_prefix = wxString::Format(wxT("\n# Task=%lu"), (unsigned long)t);
+
         for(size_t f=0; f<EncodingTasks[t]->InputFiles.GetCount(); f++)
         {
+			warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu"), (unsigned long)t, (unsigned long)f);
+
 			if(EncodingTasks[t]->OutputFile.GetFullPath() == EncodingTasks[t]->InputFiles[f]->File.GetFullPath())
 			{
-				warning.Append(wxString::Format(wxT("\nTask %lu[%lu]: target filename equals source filename!"), (unsigned long)t, (unsigned long)f));
+				warning.Append(warning_prefix + wxT("\nTarget filename equals source filename!"));
 			}
 
             for(size_t v=0; v<EncodingTasks[t]->InputFiles[f]->VideoStreams.GetCount(); v++)
@@ -2722,12 +2752,14 @@ bool AVConvGUIFrame::VerifySettings()
                 if(EncodingTasks[t]->InputFiles[f]->VideoStreams[v]->Enabled)
                 {
                     vSettings = &(EncodingTasks[t]->InputFiles[f]->VideoStreams[v]->EncodingSettings);
+                    warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu, Stream=%lu"), (unsigned long)t, (unsigned long)f, (unsigned long)v);
 
-					wxArrayString supported_codecs = Libav::FormatVideoCodecs(EncodingTasks[t]->OutputFormat);
-					bool codec_supported = false;
+					supported_codecs = Libav::FormatVideoCodecs(EncodingTasks[t]->OutputFormat);
+					selected_codec = vSettings->Codec.BeforeFirst(' ');
+					codec_supported = false;
                     for(size_t c=0; c<supported_codecs.Count(); c++)
                     {
-						if(supported_codecs[c].IsSameAs(vSettings->Codec.BeforeFirst(' ')))
+						if(supported_codecs[c].IsSameAs(selected_codec))
 						{
 							codec_supported = true;
 							break;
@@ -2735,14 +2767,14 @@ bool AVConvGUIFrame::VerifySettings()
 					}
 					if(!codec_supported)
 					{
-						warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: container format does not support the selected video codec!"), (unsigned long)t, (unsigned long)f, (unsigned long)v));
+						warning.Append(warning_prefix + wxT("\nContainer format does not support the selected video codec!"));
 					}
                     
                     if(vSettings->Bitrate.StartsWith(wxT("-crf")))
                     {
-						if(!vSettings->Codec.IsSameAs(wxT("libx264")))
+						if(!vSettings->Codec.BeforeFirst(' ').IsSameAs(wxT("libx264")))
 						{
-							warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: constant quality (-crf) only available for libx264 codec!"), (unsigned long)t, (unsigned long)f, (unsigned long)v));
+							warning.Append(warning_prefix + wxT("\nConstant quality (-crf) not supported by the selected video codec!"));
 						}
 					}
 
@@ -2755,12 +2787,14 @@ bool AVConvGUIFrame::VerifySettings()
                 if(EncodingTasks[t]->InputFiles[f]->AudioStreams[a]->Enabled)
                 {
                     aSettings = &(EncodingTasks[t]->InputFiles[f]->AudioStreams[a]->EncodingSettings);
+                    warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu, Stream=%lu"), (unsigned long)t, (unsigned long)f, (unsigned long)a);
                     
-                    wxArrayString supported_codecs = Libav::FormatAudioCodecs(EncodingTasks[t]->OutputFormat);
-					bool codec_supported = false;
+                    supported_codecs = Libav::FormatAudioCodecs(EncodingTasks[t]->OutputFormat);
+                    selected_codec = aSettings->Codec.BeforeFirst(' ');
+					codec_supported = false;
                     for(size_t c=0; c<supported_codecs.Count(); c++)
                     {
-						if(supported_codecs[c].IsSameAs(aSettings->Codec.BeforeFirst(' ')))
+						if(supported_codecs[c].IsSameAs(selected_codec))
 						{
 							codec_supported = true;
 							break;
@@ -2768,7 +2802,7 @@ bool AVConvGUIFrame::VerifySettings()
 					}
 					if(!codec_supported)
 					{
-						warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: container format does not support the selected audio codec!"), (unsigned long)t, (unsigned long)f, (unsigned long)a));
+						warning.Append(warning_prefix + wxT("\nContainer format does not support the selected audio codec!"));
 					}
 
                     /*
@@ -2814,12 +2848,14 @@ bool AVConvGUIFrame::VerifySettings()
                 if(EncodingTasks[t]->InputFiles[f]->SubtitleStreams[s]->Enabled)
                 {
                     sSettings = &(EncodingTasks[t]->InputFiles[f]->SubtitleStreams[s]->EncodingSettings);
+                    warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu, Stream=%lu"), (unsigned long)t, (unsigned long)f, (unsigned long)s);
                     
-					wxArrayString supported_codecs = Libav::FormatSubtitleCodecs(EncodingTasks[t]->OutputFormat);
-					bool codec_supported = false;
+					supported_codecs = Libav::FormatSubtitleCodecs(EncodingTasks[t]->OutputFormat);
+					selected_codec = sSettings->Codec.BeforeFirst(' ');
+					codec_supported = false;
                     for(size_t c=0; c<supported_codecs.Count(); c++)
                     {
-						if(supported_codecs[c].IsSameAs(sSettings->Codec.BeforeFirst(' ')))
+						if(supported_codecs[c].IsSameAs(selected_codec))
 						{
 							codec_supported = true;
 							break;
@@ -2827,7 +2863,7 @@ bool AVConvGUIFrame::VerifySettings()
 					}
 					if(!codec_supported)
 					{
-						warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: container format does not support the selected subtitle codec!"), (unsigned long)t, (unsigned long)f, (unsigned long)s));
+						warning.Append(warning_prefix + wxT("\nContainer format does not support the selected subtitle codec!"));
 					}
 
                     sSettings = NULL;
