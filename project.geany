@@ -23,9 +23,9 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=4
+current_page=1
 FILE_NAME_0=9919;C;0;16;1;1;0;.%2Fsrc%2FAVConvGUIMain.h;0;4
-FILE_NAME_1=126116;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.cpp;0;4
+FILE_NAME_1=47588;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.cpp;0;4
 FILE_NAME_2=61;C;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingFileLoader.h;0;4
 FILE_NAME_3=31425;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingFileLoader.cpp;0;4
 FILE_NAME_4=12306;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingTask.cpp;0;4
@@ -35,23 +35,20 @@ last_dir=/home/ronny/Documents/development/ffmpegyag
 
 [build-menu]
 NF_00_LB=Make All
-NF_00_CM=make BUILD=debug
+NF_00_CM=make BUILD=release
 NF_00_WD=%p
-NF_01_LB=Make Custom
-NF_01_CM=make BUILD=debug 
+NF_01_LB=Make Clean
+NF_01_CM=make clean BUILD=release
 NF_01_WD=%p
 NF_02_LB=Make Object
-NF_02_CM=make %d/%f.o BUILD=debug
+NF_02_CM=make %d/%f.o BUILD=release
 NF_02_WD=%p
-NF_03_LB=Make Clean
-NF_03_CM=make clean BUILD=debug
-NF_03_WD=
 EX_00_LB=_Execute
-EX_00_CM=%p/bin/ffmpegyag-dbg
-EX_00_WD=%p/bin
+EX_00_CM=%p/dist/linux/usr/bin/ffmpegyag
+EX_00_WD=%p/dist/linux/usr/bin
 filetypes=C++;C;
 C++FT_00_LB=_Compile
-C++FT_00_CM=make %d/%f.o BUILD=debug
+C++FT_00_CM=make %d/%f.o BUILD=release
 C++FT_00_WD=%p
 CFT_00_LB=_Compile
 CFT_00_CM=make %d/%e.cpp.o
@@ -63,14 +60,14 @@ CFT_02_LB=Clean
 CFT_02_CM=make clean
 CFT_02_WD=%p
 C++FT_01_LB=_Build All
-C++FT_01_CM=make BUILD=debug
+C++FT_01_CM=make BUILD=release
 C++FT_01_WD=%p
 C++FT_02_LB=Clean
-C++FT_02_CM=make clean BUILD=debug
+C++FT_02_CM=make clean BUILD=release
 C++FT_02_WD=%p
 EX_01_LB=Execute Debug
-EX_01_CM=%p/dist/linux/usr/bin/ffmpegyag
-EX_01_WD=%p/dist/linux/usr/bin
+EX_01_CM=%p/bin/ffmpegyag-dbg
+EX_01_WD=%p/bin
 
 [gproject]
 source_patterns=*.c;*.C;*.cpp;*.cxx;*.c++;*.cc;
