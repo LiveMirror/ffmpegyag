@@ -2745,24 +2745,6 @@ bool AVConvGUIFrame::VerifySettings()
 							warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: constant quality (-crf) only available for libx264 codec!"), (unsigned long)t, (unsigned long)f, (unsigned long)v));
 						}
 					}
-					
-					if(EncodingTasks[t]->OutputFormat.IsSameAs(wxT("webm")))
-                    {
-						if(!vSettings->Codec.IsSameAs(wxT("libvpx")))
-						{
-							warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: only libvpx video codec is supported in webm format!"), (unsigned long)t, (unsigned long)f, (unsigned long)v));
-						}
-					}
-
-					/*
-					if(EncodingTasks[t]->OutputFormat.IsSameAs(wxT("flv")))
-                    {
-						if(vSettings->Codec->IsSameAs(wxT("mpeg4")))
-						{
-							warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: mpeg4 codev not compatible with flv container!"), (unsigned long)t, (unsigned long)f, (unsigned long)v));
-						}
-					}
-					*/
 
                     vSettings = NULL;
                 }
@@ -2788,17 +2770,6 @@ bool AVConvGUIFrame::VerifySettings()
 					{
 						warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: container format does not support the selected audio codec!"), (unsigned long)t, (unsigned long)f, (unsigned long)a));
 					}
-
-					// obsolete with the previous implemented container/codec verification
-					/*
-					if(EncodingTasks[t]->OutputFormat.IsSameAs(wxT("webm")))
-                    {
-						if(!aSettings->Codec.IsSameAs(wxT("libvorbis")))
-						{
-							warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: only libvorbis audio codec is supported in webm format!"), (unsigned long)t, (unsigned long)f, (unsigned long)a));
-						}
-					}
-					*/
 
                     /*
                     if(EncodingTasks[t]->OutputFormat.IsSameAs(wxT("flv")))
@@ -2858,13 +2829,6 @@ bool AVConvGUIFrame::VerifySettings()
 					{
 						warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: container format does not support the selected subtitle codec!"), (unsigned long)t, (unsigned long)f, (unsigned long)s));
 					}
-
-                    /*
-                    if(!sSettings->Codec.IsSameAs(wxT("copy")) && !sSettings->Codec.IsSameAs(wxT("ass")))
-                    {
-                        warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: subtitle codec not supported!"), (unsigned long)t, (unsigned long)f, (unsigned long)s));
-                    }
-                    */
 
                     sSettings = NULL;
                 }
