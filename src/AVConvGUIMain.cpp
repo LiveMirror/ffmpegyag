@@ -153,7 +153,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ListCtrlTasks = new wxListCtrl(this, ID_LISTCTRL1, wxDefaultPosition, wxDefaultSize, wxLC_REPORT, wxDefaultValidator, _T("ID_LISTCTRL1"));
     ListCtrlTasks->SetMinSize(wxSize(400,-1));
     wxListItem col;
-    col.SetText(wxT("Source File"));
+    col.SetText(wxT("Task (Source File)"));
     ListCtrlTasks->InsertColumn(0, col);
     col.SetAlign(wxLIST_FORMAT_RIGHT);
     col.SetText(wxT("Duration"));
@@ -750,22 +750,20 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
     wxString Format = FormatToSetting(ComboBoxFileFormat->GetValue());
     if(true/*SelectedTaskIndices.GetCount() > 0*/)
     {
-		wxString selected_video_codec = ComboBoxVideoCodec->GetValue();
+		//wxString selected_video_codec = ComboBoxVideoCodec->GetValue();
         ComboBoxVideoCodec->Clear();
-        ComboBoxVideoCodec->SetValue(wxEmptyString);
-        wxString selected_audio_codec = ComboBoxAudioCodec->GetValue();
+        //ComboBoxVideoCodec->SetValue(wxEmptyString);
+        //wxString selected_audio_codec = ComboBoxAudioCodec->GetValue();
         ComboBoxAudioCodec->Clear();
-        ComboBoxAudioCodec->SetValue(wxEmptyString);
-        wxString selected_subtitle_codec = ComboBoxSubtitleCodec->GetValue();
+        //ComboBoxAudioCodec->SetValue(wxEmptyString);
+        //wxString selected_subtitle_codec = ComboBoxSubtitleCodec->GetValue();
         ComboBoxSubtitleCodec->Clear();
-        ComboBoxSubtitleCodec->SetValue(wxEmptyString);
+        //ComboBoxSubtitleCodec->SetValue(wxEmptyString);
 
 		AVMediaFlags MediaFlags = Libav::FormatMediaMap[Format];
 
         if(MediaFlags & AVMEDIA_FLAG_VIDEO)
         {
-			// TODO: apply settings from selected task[t].FileIn[f].VideoStream[v].Codec ...
-
             SpinCtrlTop->Enable();
             SpinCtrlLeft->Enable();
             SpinCtrlBottom->Enable();
@@ -778,7 +776,7 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
             ComboBoxVideoAspectRatio->Enable();
 
             ComboBoxVideoCodec->Append(Libav::FormatVideoCodecs(Format));
-            ComboBoxVideoCodec->SetValue(selected_video_codec);
+            //ComboBoxVideoCodec->SetValue(selected_video_codec);
         }
         else
         {
@@ -803,7 +801,7 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
             ComboBoxAudioChannels->Enable();
 
             ComboBoxAudioCodec->Append(Libav::FormatAudioCodecs(Format));
-            ComboBoxAudioCodec->SetValue(selected_audio_codec);
+            //ComboBoxAudioCodec->SetValue(selected_audio_codec);
         }
         else
         {
@@ -820,7 +818,7 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
             ComboBoxSubtitleCodec->Enable();
 
             ComboBoxSubtitleCodec->Append(Libav::FormatSubtitleCodecs(Format));
-            ComboBoxSubtitleCodec->SetValue(selected_subtitle_codec);
+            //ComboBoxSubtitleCodec->SetValue(selected_subtitle_codec);
         }
         else
         {
@@ -857,7 +855,7 @@ void AVConvGUIFrame::OnButtonAddTaskClick(wxCommandEvent& event)
 		{
 			HadSelectedTasks = true;
 		}
-		// TODO: chenge selection behaviour on new added tasks
+		// TODO: change selection behaviour on new added tasks
 		// never select a new added tasks
 		// HadSelectedTasks = true;
 
@@ -1007,7 +1005,7 @@ void AVConvGUIFrame::OnButtonAddTaskClick(wxCommandEvent& event)
 					if(!HadSelectedTasks)
 					{
 						ListCtrlTasks->SetItemState(InsertIndex, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-						// TODO: chenge selection behaviour on new added tasks
+						// TODO: change selection behaviour on new added tasks
 						// only select first new added tasks
 						// HadSelectedTasks = true;
 					}
@@ -1769,11 +1767,6 @@ void AVConvGUIFrame::OnComboBoxFileFormatSelect(wxCommandEvent& event)
         TaskIndex = SelectedTaskIndices[0];
         // update modified fileout in textctrl (without trigger event)
         TextCtrlFileOut->ChangeValue(EncodingTasks[TaskIndex]->OutputFile.GetFullPath());
-
-        // FIXME: load settings for re-enabled controls
-		// i.e. when selecteing audio format -> video codec blanked
-		// when re-select video format -> video codec stay blank
-		// -> see also EnableDisableAVFormatControls()
     }
 
     //wxMessageBox(wxT("FileFormat Changed"));
@@ -2609,7 +2602,10 @@ void AVConvGUIFrame::OnButtonAbortClick(wxCommandEvent& event)
 void AVConvGUIFrame::OnProcessTerinate(wxProcessEvent& event)
 {
     // TODO: get exit code and print error if necessary
-    wxMessageBox(wxString::Format(wxT("ffmpeg exit code: %i"), event.GetExitCode()));
+    if(event.GetExitCode() != 0)
+    {
+		wxMessageBox(wxString::Format(wxT("External application exit with code: %i"), event.GetExitCode()));
+	}
 }
 
 /*
