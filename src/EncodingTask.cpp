@@ -106,15 +106,47 @@ wxArrayString EncodingTask::GetCommands()
 
 wxString EncodingTask::GetCommandAVConv(wxString OutputFileName, wxString StartTime, wxString Duration, Pass PassNumber)
 {
+	wxString Seperator = wxFileName::GetPathSeparator();
+
     #ifdef __LINUX__
-    wxString Command = wxT("ffmpeg");
-    if(wxFile::Exists(wxT("/usr/bin/avconv")) || wxFile::Exists(wxT("/sbin/avconv")) || wxFile::Exists(wxT("/bin/avconv")))
+	// primary choice
+	wxString Command = wxT("ffmpeg-x264-10bit");
+	if(!wxFile::Exists(wxT("/usr/bin/") + Command) && !wxFile::Exists(wxT("/sbin/") + Command) && !wxFile::Exists(wxT("/bin/") + Command))
     {
-		Command = wxT("avconv");
+		// secondary choice
+		Command = wxT("avconv-x264-10bit");
+		if(!wxFile::Exists(wxT("/usr/bin/") + Command) && !wxFile::Exists(wxT("/sbin/") + Command) && !wxFile::Exists(wxT("/bin/") + Command))
+		{
+			// third choice
+			Command = wxT("ffmpeg");	
+			if(!wxFile::Exists(wxT("/usr/bin/") + Command) && !wxFile::Exists(wxT("/sbin/") + Command) && !wxFile::Exists(wxT("/bin/") + Command))
+			{
+				// fallback choice
+				Command = wxT("avconv");	
+			}
+		}
 	}
     #endif
     #ifdef __WINDOWS__
-    wxString Command = wxT("\"") + wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\ffmpeg.exe\"");
+    wxString CommandDirectory = wxStandardPaths::Get().GetExecutablePath().BeforeLast(Seperator));
+	// primary choice
+	wxString Command = CommandDirectory + Seperator + wxT("ffmpeg-x264-10bit.exe");
+	if(!wxFile::Exists(Command))
+	{
+		// secondary choice
+		Command = CommandDirectory + Seperator + wxT("avconv-x264-10bit.exe");
+		if(!wxFile::Exists(Command))
+		{
+			// third choice
+			Command = CommandDirectory + Seperator + wxT("ffmpeg.exe");
+			if(!wxFile::Exists(Command))
+			{
+				// fallback choice
+				Command = CommandDirectory + Seperator + wxT("avconv.exe");
+			}
+		}
+
+	}
     #endif
 
     AVMediaFlags SupportedMediaFlags = Libav::FormatMediaMap[OutputFormat]; // AVMEDIA_FLAG_VIDEO

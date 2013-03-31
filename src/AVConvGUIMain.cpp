@@ -856,7 +856,7 @@ void AVConvGUIFrame::OnButtonAddTaskClick(wxCommandEvent& event)
 			HadSelectedTasks = true;
 		}
 		// TODO: change selection behaviour on new added tasks
-		// never select a new added tasks
+		// never auto select new added tasks
 		// HadSelectedTasks = true;
 
         ListCtrlTasks->Freeze();
@@ -1006,7 +1006,7 @@ void AVConvGUIFrame::OnButtonAddTaskClick(wxCommandEvent& event)
 					{
 						ListCtrlTasks->SetItemState(InsertIndex, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 						// TODO: change selection behaviour on new added tasks
-						// only select first new added tasks
+						// never auto select more then the first new added task
 						// HadSelectedTasks = true;
 					}
                 }
@@ -1787,7 +1787,7 @@ void AVConvGUIFrame::OnTextCtrlFileOutChange(wxCommandEvent& event)
     // on multi task selection: change directory, keep filename
     if(SelectedTaskIndices.GetCount() > 1)
     {
-        wxString Seperator(wxFileName::GetPathSeparator());
+        wxString Seperator = wxFileName::GetPathSeparator();
         wxString Directory = TextCtrlFileOut->GetValue();
 
         if(!Directory.EndsWith(Seperator + wxT("*")))
