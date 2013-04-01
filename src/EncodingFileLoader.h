@@ -1,8 +1,6 @@
 #ifndef ENCODINGFILELOADER_H
 #define ENCODINGFILELOADER_H
 
-#include <wx/file.h>
-#include <wx/filename.h>
 #include <wx/progdlg.h>
 
 #include "VideoFrameGOP.h"

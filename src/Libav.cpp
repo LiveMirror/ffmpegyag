@@ -2,6 +2,7 @@
 
 // define static members
 
+wxFileName Libav::ConverterApplication;
 wxArrayString Libav::VideoCodecList;
 wxArrayString Libav::AudioCodecList;
 wxArrayString Libav::SubtitleCodecList;
@@ -16,6 +17,28 @@ PixelFormatHashMap Libav::PixelDescriptionMap;
 void Libav::Init()
 {
     av_register_all();
+
+    // find best matching converter application (in the applications directory!)
+
+    ConverterApplication.Assign(wxStandardPaths::Get().GetExecutablePath());
+
+	// primary choice
+	ConverterApplication.SetName(wxT("ffmpeg-x264-10bit"));
+	if(!ConverterApplication.FileExists())
+	{
+		// secondary choice
+		ConverterApplication.SetName(wxT("avconv-x264-10bit"));
+		if(!ConverterApplication.FileExists())
+		{
+			// third choice
+			ConverterApplication.SetName(wxT("ffmpeg"));
+			if(!ConverterApplication.FileExists())
+			{
+				// fallback choice
+				ConverterApplication.SetName(wxT("avconv"));
+			}
+		}
+	}
 
     // initialize codec members
 

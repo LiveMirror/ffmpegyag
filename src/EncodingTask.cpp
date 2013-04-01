@@ -107,47 +107,7 @@ wxArrayString EncodingTask::GetCommands()
 wxString EncodingTask::GetCommandAVConv(wxString OutputFileName, wxString StartTime, wxString Duration, Pass PassNumber)
 {
 	wxString Seperator = wxFileName::GetPathSeparator();
-
-    #ifdef __LINUX__
-	// primary choice
-	wxString Command = wxT("ffmpeg-x264-10bit");
-	if(!wxFile::Exists(wxT("/usr/bin/") + Command) && !wxFile::Exists(wxT("/sbin/") + Command) && !wxFile::Exists(wxT("/bin/") + Command))
-    {
-		// secondary choice
-		Command = wxT("avconv-x264-10bit");
-		if(!wxFile::Exists(wxT("/usr/bin/") + Command) && !wxFile::Exists(wxT("/sbin/") + Command) && !wxFile::Exists(wxT("/bin/") + Command))
-		{
-			// third choice
-			Command = wxT("ffmpeg");	
-			if(!wxFile::Exists(wxT("/usr/bin/") + Command) && !wxFile::Exists(wxT("/sbin/") + Command) && !wxFile::Exists(wxT("/bin/") + Command))
-			{
-				// fallback choice
-				Command = wxT("avconv");	
-			}
-		}
-	}
-    #endif
-    #ifdef __WINDOWS__
-    wxString CommandDirectory = wxStandardPaths::Get().GetExecutablePath().BeforeLast(Seperator));
-	// primary choice
-	wxString Command = CommandDirectory + Seperator + wxT("ffmpeg-x264-10bit.exe");
-	if(!wxFile::Exists(Command))
-	{
-		// secondary choice
-		Command = CommandDirectory + Seperator + wxT("avconv-x264-10bit.exe");
-		if(!wxFile::Exists(Command))
-		{
-			// third choice
-			Command = CommandDirectory + Seperator + wxT("ffmpeg.exe");
-			if(!wxFile::Exists(Command))
-			{
-				// fallback choice
-				Command = CommandDirectory + Seperator + wxT("avconv.exe");
-			}
-		}
-
-	}
-    #endif
+	wxString Command = wxT("\"") + Libav::ConverterApplication.GetFullPath() + wxT("\"");
 
     AVMediaFlags SupportedMediaFlags = Libav::FormatMediaMap[OutputFormat]; // AVMEDIA_FLAG_VIDEO
 

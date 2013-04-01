@@ -3,6 +3,9 @@
 
 #include <wx/arrstr.h>
 #include <wx/hashmap.h>
+#include <wx/file.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
 
 #ifndef INT64_C
 #define INT64_C(c)	c ## L
@@ -59,7 +62,9 @@ class Libav
     public: static wxArrayString FormatSubtitleCodecs(wxString ContainerFormat);
 
     // declare static members
-
+    
+    // the path to the best matching ffmpeg binary found by init()
+	public: static wxFileName ConverterApplication;
     // supported codecs for video encoding
     public: static wxArrayString VideoCodecList;
     // supported codecs for audio encoding
