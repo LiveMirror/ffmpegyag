@@ -3,44 +3,31 @@
 show_help()
 {
   echo "
-Usage: ./configure [OPTIONS]
+Usage: ./configure [options]
 
-OPTIONS:
+Options:
 
-  -h, --help         display this help and exit
-      --config-NAME  select the configuration file which should be used
-                     i.e. '--config-x86-linux-gcc' will generate a
-                     makefile based on 'config_x86-linux-gcc.sh'
-                     default [--config-default]
-  "
-  
+  -h, --help                display this help and exit
+      --config-NAME         use the configuration script config_NAME.sh
+                            to generate the Makefile
+                            i.e. '--config-x86-linux-gcc' will generate a
+                            makefile based on 'config_x86-linux-gcc.sh'
+                            [--config-default]"
+	for CONFIGSCRIPT in $(find -maxdepth 1 -type f -name 'config_*.sh')
+	do
+		#if [ $CONFIGSCRIPT != "./config_default.sh" ]
+		#then
+			echo "      $(echo $CONFIGSCRIPT | sed 's|.*config_|--config-|g;s|\.sh||g')"
+		#fi
+	done
+	echo "
+      --prefix=\"DIRECTORY\"  install distribution files in DIRECTORY
+                            [/usr/local]
+"
+
   # http://www.gnu.org/prep/standards/html_node/Configuration.html
   # http://www.sourceware.org/autobook/autobook/autobook_17.html#SEC17
   # http://www.gnu.org/software/automake/manual/html_node/Cross_002dCompilation.html
-  #
-
-  # --prefix --exec-prefix --bindir --sbindir --libexecdir --sysconfdir
-  # --sharedstatedir --localstatedir --libdir --includedir --oldincludedir
-  # --datarootdir --datadir --infodir --localedir --mandir --docdir
-  # --htmldir --dvidir --pdfdir --psdir
-  #
-  # cpu-company-system
-  # cpu-manufacter-os-kernel
-  # i.e. i686-pc-linux-gnu, i386-linux-gnu, rs6000-ibm-aix3.2, i386-pc-winnt4.0, sparc-sun-solaris2.4, i586-mingw32msvc
-  #
-  # ‘--enable-feature[=parameter]’
-  # ‘--with-package’
-  # ‘variable=value’ i.e. ./configure CC=gcc, CC=gcc ./configure
-  #
-  # cross compile
-  # /configure --host=hosttype --target=targettype
-  #
-  # --build=build-type
-  #       the type of system on which the package is being configured and compiled. It defaults to the result of running config.guess. Specifying a build-type that differs from host-type enables cross-compilation mode.
-  # --host=host-type
-  #       the type of system on which the package runs. By default it is the same as the build machine. Specifying a host-type that differs from build-type, when build-type was also explicitly specified, enables cross-compilation mode.
-  # --target=target-type
-  #       the type of system for which any compiler tools in the package produce code (rarely needed). By default, it is the same as host. 
 
   exit
 }
@@ -50,9 +37,9 @@ check_command()
 	$@ >/dev/null 2>&1
 	if [ $? = 0 ]
 	then
-		echo "$AF_GREEN ok $AF_RESET"
+		echo -e "$AF_GREEN ok $AF_RESET"
 	else
-		echo "$AF_RED failed $AF_RESET"
+		echo -e "$AF_RED failed $AF_RESET"
 		return 1
 	fi
 }
@@ -66,6 +53,11 @@ check_env()
 		AF_GREEN=$(tput setaf 2)
 		AF_YELLOW=$(tput setaf 3)
 		AF_RESET=$(tput sgr0)
+	else
+		AF_RED=$(echo -e "\033[31m")
+		AF_GREEN=$(echo -e "\033[32m")
+		AF_YELLOW=$(echo -e "\033[33m")
+		AF_RESET=$(echo -e "\033[0m")
 	fi
 
 	#echo -n "  checking ls ... "
@@ -147,13 +139,18 @@ default_config()
 Description"
 	SRCPATTERN="*.c *.cc *.c++ *.cxx *.cpp"
 	SRCDIR="src"
+	RCPATTERN="*.rc"
+	RCDIR="res"
 	OBJDIR="obj"
 	DISTROOT=""
 	BINFILE="bin/no-name"
 	CC="gcc"
 	CFLAGS="-c -Wall -O2"
+	RC=""
+	RCFLAGS=""
 	LD="gcc"
 	LDFLAGS="-s"
+	LDLIBS=""
 }
 
 load_config()
@@ -235,14 +232,8 @@ load_config()
 			DISTROOT=""
 		fi
 	else
-		#mkdir -p "$DISTROOT"
-		#if [ -d "$DISTROOT" ]
-		#then
-		#	echo "$AF_YELLOW not found $AF_RESET -> $AF_GREEN created $AF_RESET"
-		#else
-			echo "$AF_YELLOW invalid directory $AF_RESET -> $AF_GREEN ignored $AF_RESET"
-			DISTROOT=""
-		#fi
+		echo "$AF_YELLOW invalid directory $AF_RESET -> $AF_GREEN ignored $AF_RESET"
+		DISTROOT=""
 	fi
 
 	echo -n "  checking compiler ($CC) ... "
@@ -251,11 +242,20 @@ load_config()
 	echo -n "  checking includes (-I) ... "
 	check_command "ls $(echo '$CFLAGS' | grep -o '\-I\S*' | sed -e 's|-I||g')"
 
+	# NOTE: check for resource compiler disabled because on linux none will be found...
+	echo -n "  checking rc-compiler ($RC) ... "
+	echo "$AF_YELLOW skipped $AF_RESET"
+	#check_command "$RC -V"
+
+	echo -n "  checking rc-includes (-I) ... "
+	check_command "ls $(echo '$RCFLAGS' | grep -o '\-I\S*' | sed -e 's|-I||g')"
+
 	echo -n "  checking linker ($LD) ... "
 	check_command "$LD -v"
 
 	echo -n "  checking libraries (-L, -l, /*) ... "
-	check_command "ld -lc $(echo '$LDFLAGS' | grep -o '\s\/\S*\|[\-][Ll]\S*') -o /dev/null"
+	check_command "ld -L/lib -lc $(echo '$LDLIBS' | grep -o '\s\/\S*\|[\-][Ll]\S*') -o null.bin"
+	rm -f "null.bin"
 }
 
 write_makefile_header()
@@ -280,6 +280,8 @@ write_makefile_configuration()
 	echo "" >> $MAKEFILE
 	echo "SRCPATTERN = $SRCPATTERN" >> $MAKEFILE
 	echo "SRCDIR = $SRCDIR" >> $MAKEFILE
+	echo "RCPATTERN = $RCPATTERN" >> $MAKEFILE
+	echo "RCDIR = $RCDIR" >> $MAKEFILE
 	echo "OBJDIR = $OBJDIR" >> $MAKEFILE
 
 	if [ "$DISTROOT" ]
@@ -293,19 +295,20 @@ write_makefile_configuration()
 	echo "" >> $MAKEFILE
 	echo "CC = $CC" >> $MAKEFILE
 	echo "CFLAGS = $(echo $CFLAGS | sed -e 's|[ ]+| |g')" >> $MAKEFILE
+	echo "RC = $RC" >> $MAKEFILE
+	echo "RCFLAGS = $(echo $RCFLAGS | sed -e 's|[ ]+| |g')" >> $MAKEFILE
 	echo "LD = $LD" >> $MAKEFILE
 	echo "LDFLAGS = $(echo $LDFLAGS | sed -e 's|[ ]+| |g')" >> $MAKEFILE
 	echo "LDLIBS = $(echo $LDLIBS | sed -e 's|[ ]+| |g')" >> $MAKEFILE
 	echo "" >> $MAKEFILE
 	echo "SRCFILES := \$(shell find \$(SRCDIR) -type f -name '' \$(addprefix -or -name , \$(SRCPATTERN)))" >> $MAKEFILE
 	echo "" >> $MAKEFILE
-	echo "OBJFILES := \$(patsubst \$(SRCDIR)/%, \$(OBJDIR)/%.o, \$(SRCFILES))" >> $MAKEFILE
+	echo "RCFILES := \$(shell find \$(RCDIR) -type f -name '' \$(addprefix -or -name , \$(RCPATTERN)))" >> $MAKEFILE
 	echo "" >> $MAKEFILE
-	echo "DISTFILES := \$(patsubst \$(DISTROOT)%, %, \$(shell find \$(DISTROOT) -type f))" >> $MAKEFILE
-	echo "DISTDIRECTORIES := \$(patsubst \$(DISTROOT)%, %, \$(shell find \$(DISTROOT) -type d -empty))" >> $MAKEFILE
+	echo "OBJFILES := \$(patsubst \$(SRCDIR)/%, \$(OBJDIR)/%.o, \$(SRCFILES)) \$(patsubst \$(RCDIR)/%, \$(OBJDIR)/%.x, \$(RCFILES))" >> $MAKEFILE
 	echo "" >> $MAKEFILE
-	echo "TGZPKG := \$(PKGNAME)_\$(PKGVERSION).tar.gz" >> $MAKEFILE
-	echo "DEBPKG := \$(PKGNAME)_\$(PKGVERSION)_\$(shell dpkg --print-architecture).deb" >> $MAKEFILE
+	echo "DISTFILES := \$(patsubst \$(DISTROOT)/%, %, \$(shell find \$(DISTROOT) -type f))" >> $MAKEFILE
+	echo "DISTDIRECTORIES := \$(patsubst \$(DISTROOT)/%, %, \$(shell find \$(DISTROOT) -type d -empty))" >> $MAKEFILE
 	echo "" >> $MAKEFILE
 }
 
@@ -319,49 +322,59 @@ write_makefile_rule_build()
 	echo "		\$(LD) \$(LDFLAGS) -o \$@ \$^ \$(LDLIBS)" >> $MAKEFILE
 	echo "" >> $MAKEFILE
 	echo "\$(CURDIR)/\$(OBJDIR)/%.o \$(CURDIR)/\$(SRCDIR)/%.o \$(SRCDIR)/%.o: \$(OBJDIR)/%.o" >> $MAKEFILE
+	echo "\$(CURDIR)/\$(OBJDIR)/%.x \$(CURDIR)/\$(RCDIR)/%.x \$(RCDIR)/%.x: \$(OBJDIR)/%.x" >> $MAKEFILE
+	echo "		" >> $MAKEFILE
+	echo "\$(OBJDIR)/%.x: \$(RCDIR)/%" >> $MAKEFILE
+	echo "		@echo " >> $MAKEFILE
+	echo "		@\$(shell mkdir -p \$(dir \$@))" >> $MAKEFILE
+	echo "		\$(RC) \$(RCFLAGS) -o \$@ -i \$<" >> $MAKEFILE
+	# TODO: create a correct dependency file from an rc file... (depends on includes, icons, manifests, ...)
+	echo "		@\$(CC) \$(CFLAGS) -M \$< > \$(OBJDIR)/\$*.depend 2> /dev/null" >> $MAKEFILE
 	echo "		" >> $MAKEFILE
 	echo "\$(OBJDIR)/%.o: \$(SRCDIR)/%" >> $MAKEFILE
 	echo "		@echo " >> $MAKEFILE
 	echo "		@\$(shell mkdir -p \$(dir \$@))" >> $MAKEFILE
 	echo "		\$(CC) \$(CFLAGS) -o \$@ \$<" >> $MAKEFILE
-	echo "		@gcc \$(CFLAGS) -MM -MT \$@ \$< >> \$(OBJDIR)/\$*.depend" >> $MAKEFILE
+	echo "		@\$(CC) \$(CFLAGS) -M \$< > \$(OBJDIR)/\$*.depend" >> $MAKEFILE
 	echo "" >> $MAKEFILE
-	echo "-include \$(OBJFILES:.o=.depend)" >> $MAKEFILE
+	echo "-include \$(\$(OBJFILES:.o=.depend):.x=.depend)" >> $MAKEFILE
 	echo "" >> $MAKEFILE
 }
 
 write_makefile_rule_clean()
 {
 	echo "clean:" >> $MAKEFILE
-	#echo "		@find \$(OBJDIR) -type f -delete" >> $MAKEFILE
-	#echo "		@rm -f \$(BINFILE)" >> $MAKEFILE
-	echo "		@rm -f \$(OBJFILES) \$(OBJFILES:.o=.depend) \$(BINFILE)" >> $MAKEFILE
+	echo "		@rm -f \$(OBJFILES) \$(OBJFILES:.o=.depend) \$(OBJFILES:.x=.depend) \$(BINFILE)" >> $MAKEFILE
 	echo "" >> $MAKEFILE
 }
 
 write_makefile_rule_dist_installer()
 {
 	echo "install:" >> $MAKEFILE
-	echo "		@cp -v -r \$(DISTROOT)/* /" >> $MAKEFILE
-	echo "		@update-menus" >> $MAKEFILE
+	echo "		@cp -v -r \$(DISTROOT)/* $INSTALLDIR" >> $MAKEFILE
+	echo "		-@update-menus" >> $MAKEFILE
 	echo "" >> $MAKEFILE
 	echo "uninstall:" >> $MAKEFILE
-	echo "		@rm -v -f \$(DISTFILES) 2> /dev/null" >> $MAKEFILE
-	echo "		@rmdir -p --ignore-fail-on-non-empty \$(DISTDIRECTORIES) 2> /dev/null" >> $MAKEFILE
-	echo "		@rmdir -p --ignore-fail-on-non-empty \$(dir \$(DISTFILES)) 2> /dev/null" >> $MAKEFILE
-	echo "		@update-menus" >> $MAKEFILE
+	echo "		@rm -v -f \$(addprefix $INSTALLDIR/, \$(DISTFILES)) 2> /dev/null" >> $MAKEFILE
+	echo "		@rmdir -p --ignore-fail-on-non-empty \$(addprefix $INSTALLDIR/, \$(DISTDIRECTORIES)) 2> /dev/null" >> $MAKEFILE
+	echo "		@rmdir -p --ignore-fail-on-non-empty \$(dir \$(addprefix $INSTALLDIR/, \$(DISTFILES))) 2> /dev/null" >> $MAKEFILE
+	echo "		-@update-menus" >> $MAKEFILE
 	echo "" >> $MAKEFILE
 }
 
 write_makefile_rule_dist_tgz()
 {
+	echo "TGZPKG := \$(PKGNAME)_\$(PKGVERSION).tar.gz" >> $MAKEFILE
+	echo "" >> $MAKEFILE
 	echo "tgz:" >> $MAKEFILE
-	echo "		@tar -v -c -z --exclude='\$(TGZPKG)' --exclude='make*' --exclude='*.deb' --exclude='\$(BINFILE)' --exclude='\$(OBJDIR)/*' -f \$(TGZPKG) *" >> $MAKEFILE
+	echo "		@tar -v -c -z --exclude='\$(TGZPKG)' --exclude='make*' --exclude='Make*' --exclude='*.deb' --exclude='\$(BINFILE)' --exclude='\$(OBJDIR)/*' -f \$(TGZPKG) *" >> $MAKEFILE
 	echo "" >> $MAKEFILE
 }
 
 write_makefile_rule_dist_deb()
 {
+	echo "DEBPKG := \$(PKGNAME)_\$(PKGVERSION)_\$(shell dpkg --print-architecture).deb" >> $MAKEFILE
+	echo "" >> $MAKEFILE
 	echo "deb: all" >> $MAKEFILE
 	echo "		@mkdir -p \$(DISTROOT)/DEBIAN 2> /dev/null" >> $MAKEFILE
 	echo "		@echo 'Package: $PKGNAME' > \$(DISTROOT)/DEBIAN/control" >> $MAKEFILE
@@ -420,11 +433,19 @@ write_makefile_dependency_resolver()
 	echo "" >> $MAKEFILE
 }
 
+# TODO: add iss section for creating inno setup script
+
 ######################################
 ### main entry point of the script ###
 ######################################
 
 CONFIGSCRIPT=$(pwd)/config_default.sh
+INSTALLDIR="/usr/local"
+# TODO: change default installation directory for mingw/windows?
+#if [ $(uname | grep 'MING.*NT.*') ]
+#then
+#	INSTALLDIR="/c/Program Files"
+#fi
 MAKEFILE=$(pwd)/Makefile
 
 # itereate commandline arguments
@@ -435,7 +456,10 @@ do
 						;;
 		--help)			show_help
 						;;
-		--config-*)		CONFIGSCRIPT=$(pwd)/config_$(echo $ARG | sed -e 's|--config-||g').sh
+		--config-*)		CONFIGSCRIPT=$(pwd)/$(echo $ARG | sed 's|--config-|config_|g').sh
+						;;
+		--prefix=*)		INSTALLDIR=$(echo $ARG | sed 's|--prefix=||g')
+						echo "Install Path: $INSTALLDIR"
 						;;
 	esac
 done
@@ -459,8 +483,13 @@ then
 		write_makefile_rule_clean
 		write_makefile_rule_dist_installer
 		write_makefile_rule_dist_tgz
-		write_makefile_rule_dist_deb
-		write_makefile_dependency_resolver
+		#check_command "dpkg --version"
+		dpkg --version >/dev/null 2>&1
+		if [ $? = 0 ]
+		then
+			write_makefile_rule_dist_deb
+			write_makefile_dependency_resolver
+		fi
 	fi
 fi
 

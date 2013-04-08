@@ -11,9 +11,11 @@ PKGDESCRIPTION="A GTK based GUI for ffmpeg
 
 SRCPATTERN="*.cpp"
 SRCDIR="src"
+RCPATTERN=""
+RCDIR=""
 OBJDIR="obj"
 DISTROOT="dist/linux"
-BINFILE="$DISTROOT/usr/bin/$PKGNAME"
+BINFILE="$DISTROOT/bin/$PKGNAME"
 
 CC="g++"
 CFLAGS="
@@ -22,6 +24,9 @@ CFLAGS="
 	-O2
 	$(wx-config --static=yes --debug=no --cflags)
 	"
+
+RC=""
+RCFLAGS=""
 
 LD="g++"
 LDFLAGS="-s"
