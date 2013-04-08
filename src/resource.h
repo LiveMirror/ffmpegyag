@@ -16,8 +16,8 @@ struct RCDATA
 
 struct RESOURCES
 {
-	// File: "/home/ronny/Documents/Developement/avconvgui/res/app.ico"
-	public: static const RCDATA APP_ICO;
+	// File: "C:\Users\ronny\Desktop\win-dev-tools\MinGW32\msys\home\ronny\ffmpegyag\res\app-16.ico"
+	public: static const RCDATA APP_16_ICO;
 };
 
 #endif // RESOURCES_H

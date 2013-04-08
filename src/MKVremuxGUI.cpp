@@ -36,7 +36,7 @@ MKVremuxGUI::MKVremuxGUI(wxWindow* parent,wxWindowID id,const wxPoint& pos)
 	Move(wxDefaultPosition);
 	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
 	wxIcon ico;
-	wxMemoryInputStream* ResourceMemoryStream = new wxMemoryInputStream(RESOURCES::APP_ICO.data, RESOURCES::APP_ICO.length);
+	wxMemoryInputStream* ResourceMemoryStream = new wxMemoryInputStream(RESOURCES::APP_16_ICO.data, RESOURCES::APP_16_ICO.length);
 	ico.CopyFromBitmap(wxBitmap(wxImage(*ResourceMemoryStream, wxBITMAP_TYPE_ICO)));
 	wxDELETE(ResourceMemoryStream);
 	//ResourceMemoryStream = NULL;

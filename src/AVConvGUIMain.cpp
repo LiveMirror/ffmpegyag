@@ -130,7 +130,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     Create(parent, wxID_ANY, _("FFmpegYAG"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE, _T("wxID_ANY"));
     SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
     wxIcon ico;
-    wxMemoryInputStream* ResourceMemoryStream = new wxMemoryInputStream(RESOURCES::APP_ICO.data, RESOURCES::APP_ICO.length);
+    wxMemoryInputStream* ResourceMemoryStream = new wxMemoryInputStream(RESOURCES::APP_16_ICO.data, RESOURCES::APP_16_ICO.length);
     ico.CopyFromBitmap(wxBitmap(wxImage(*ResourceMemoryStream, wxBITMAP_TYPE_ICO)));
     wxDELETE(ResourceMemoryStream);
     //ResourceMemoryStream = NULL;

@@ -4,11 +4,12 @@ syntax: glob
 *.res
 *.deb
 *.tar.gz
-config-debug.sh
+config_debug.sh
 make-*
 makefile
+Makefile
 *.bat
 bin/*
 obj/*
-dist/linux/usr/bin/*
-dist/winnt/ffmpegyag/FFmpegYAG*
+dist/linux/bin/ffmpegyag*
+dist/msw/bin/ffmpegyag*
