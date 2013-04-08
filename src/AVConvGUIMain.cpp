@@ -750,13 +750,13 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
     wxString Format = FormatToSetting(ComboBoxFileFormat->GetValue());
     if(true/*SelectedTaskIndices.GetCount() > 0*/)
     {
-		//wxString selected_video_codec = ComboBoxVideoCodec->GetValue();
+		wxString selected_video_codec = ComboBoxVideoCodec->GetValue();
         ComboBoxVideoCodec->Clear();
         //ComboBoxVideoCodec->SetValue(wxEmptyString);
-        //wxString selected_audio_codec = ComboBoxAudioCodec->GetValue();
+        wxString selected_audio_codec = ComboBoxAudioCodec->GetValue();
         ComboBoxAudioCodec->Clear();
         //ComboBoxAudioCodec->SetValue(wxEmptyString);
-        //wxString selected_subtitle_codec = ComboBoxSubtitleCodec->GetValue();
+        wxString selected_subtitle_codec = ComboBoxSubtitleCodec->GetValue();
         ComboBoxSubtitleCodec->Clear();
         //ComboBoxSubtitleCodec->SetValue(wxEmptyString);
 
@@ -776,7 +776,7 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
             ComboBoxVideoAspectRatio->Enable();
 
             ComboBoxVideoCodec->Append(Libav::FormatVideoCodecs(Format));
-            //ComboBoxVideoCodec->SetValue(selected_video_codec);
+            ComboBoxVideoCodec->SetValue(selected_video_codec);
         }
         else
         {
@@ -801,7 +801,7 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
             ComboBoxAudioChannels->Enable();
 
             ComboBoxAudioCodec->Append(Libav::FormatAudioCodecs(Format));
-            //ComboBoxAudioCodec->SetValue(selected_audio_codec);
+            ComboBoxAudioCodec->SetValue(selected_audio_codec);
         }
         else
         {
@@ -818,7 +818,7 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
             ComboBoxSubtitleCodec->Enable();
 
             ComboBoxSubtitleCodec->Append(Libav::FormatSubtitleCodecs(Format));
-            //ComboBoxSubtitleCodec->SetValue(selected_subtitle_codec);
+            ComboBoxSubtitleCodec->SetValue(selected_subtitle_codec);
         }
         else
         {

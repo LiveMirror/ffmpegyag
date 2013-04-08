@@ -21,7 +21,7 @@ CFLAGS="
 	-Ilib/msw/wx/mswu
 	-Iinclude/msw/ffmpeg
 	"
-#-I$(WXDIR)\include -I$(WXDIR)\contrib\include -I$(WXDIR)\lib\gcc_lib\mswu -Iinclude\winnt\ffmpeg -D__GNUWIN32__ -D__WXMSW__ -DwxUSE_UNICODE
+
 RC="windres.exe"
 RCFLAGS="
 	-J rc
@@ -53,19 +53,10 @@ LDLIBS="
 	-lswscale.dll
 	-lavutil.dll
 	-L/mingw/lib
-	-lkernel32
-	-luser32
-	-lgdi32
 	-lwinspool
-	-lcomdlg32
-	-ladvapi32
-	-lshell32
 	-lole32
 	-loleaut32
 	-luuid
 	-lcomctl32
-	-lwsock32
-	-lodbc32
 	-lopengl32
 	"
-#-lwxmsw28u -lwxmsw28u_gl -lwxpng -lwxjpeg -lwxtiff -lwxzlib -lavformat -lavcodec -lswscale -lavutil -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lcomctl32 -lwsock32 -lodbc32 -s -mthreads -static-libgcc -static-libstdc++ -mwindows -lopengl32
