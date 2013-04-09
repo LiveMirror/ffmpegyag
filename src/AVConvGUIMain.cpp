@@ -506,7 +506,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
 
 	ComboBoxFileFormat->SetValue(wxT("matroska"));
 	ComboBoxVideoCodec->SetValue(wxT("libx264"));
-	ComboBoxAudioCodec->SetValue(wxT("libfaac"));
+	ComboBoxAudioCodec->SetValue(wxT("aac"));
 	ComboBoxSubtitleCodec->SetValue(wxT("copy"));
     EnableDisableAVFormatControls();
 }

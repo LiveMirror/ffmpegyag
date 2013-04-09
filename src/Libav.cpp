@@ -428,6 +428,7 @@ wxArrayString Libav::FormatAudioCodecs(wxString ContainerFormat)
 
     if(ContainerFormat.IsSameAs(wxT("matroska")))
     {
+		codecs.Add(wxT("libfdk_aac"));
 		codecs.Add(wxT("libfaac"));
 		codecs.Add(wxT("aac"));
 		codecs.Add(wxT("ac3"));
@@ -440,6 +441,7 @@ wxArrayString Libav::FormatAudioCodecs(wxString ContainerFormat)
 
     if(ContainerFormat.IsSameAs(wxT("mp4")))
     {
+		codecs.Add(wxT("libfdk_aac"));
 		codecs.Add(wxT("libfaac"));
 		codecs.Add(wxT("aac"));
 		codecs.Add(wxT("ac3"));
@@ -452,6 +454,7 @@ wxArrayString Libav::FormatAudioCodecs(wxString ContainerFormat)
 
     if(ContainerFormat.IsSameAs(wxT("mov")))
     {
+		codecs.Add(wxT("libfdk_aac"));
 		codecs.Add(wxT("libfaac"));
 		codecs.Add(wxT("aac"));
 		codecs.Add(wxT("ac3"));
