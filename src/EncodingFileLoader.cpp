@@ -1,5 +1,5 @@
 #include "EncodingFileLoader.h"
-
+#include <wx/msgdlg.h>
 static int CompareIndexEntry(IndexEntry** First, IndexEntry** Second)
 {
     return (int)((*First)->Timestamp - (*Second)->Timestamp);
@@ -183,7 +183,7 @@ EncodingFileLoader::EncodingFileLoader(wxFileName InputFile)
                         {
                             vStream->Bitrate = stream->codec->bit_rate;
                         }
-                        else
+                        else if(vStream->Duration)
                         {
                             vStream->Bitrate = (int)(8 * vStream->Size * 1000 / vStream->Duration);
                         }
@@ -289,7 +289,7 @@ EncodingFileLoader::EncodingFileLoader(wxFileName InputFile)
                         {
                             aStream->Bitrate = stream->codec->bit_rate;
                         }
-                        else
+                        else if(aStream->Duration > 0)
                         {
                             aStream->Bitrate = (int)(8 * aStream->Size * 1000 / aStream->Duration);
                         }
@@ -366,7 +366,7 @@ EncodingFileLoader::EncodingFileLoader(wxFileName InputFile)
                         {
                             sStream->Bitrate = stream->codec->bit_rate;
                         }
-                        else
+                        else if(sStream->Duration > 0)
                         {
                             sStream->Bitrate = (int)(8 * sStream->Size * 1000 / sStream->Duration);
                         }
