@@ -2751,7 +2751,7 @@ bool AVConvGUIFrame::VerifySettings()
                     warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu, Stream=%lu"), (unsigned long)t, (unsigned long)f, (unsigned long)v);
 
 					supported_codecs = Libav::FormatVideoCodecs(EncodingTasks[t]->OutputFormat);
-					selected_codec = vSettings->Codec.BeforeFirst(' ');
+					selected_codec = FormatFromSetting(vSettings->Codec.BeforeFirst(' '), wxT("default"));
 					codec_supported = false;
                     for(size_t c=0; c<supported_codecs.Count(); c++)
                     {
@@ -2786,7 +2786,7 @@ bool AVConvGUIFrame::VerifySettings()
                     warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu, Stream=%lu"), (unsigned long)t, (unsigned long)f, (unsigned long)a);
                     
                     supported_codecs = Libav::FormatAudioCodecs(EncodingTasks[t]->OutputFormat);
-                    selected_codec = aSettings->Codec.BeforeFirst(' ');
+                    selected_codec = FormatFromSetting(aSettings->Codec.BeforeFirst(' '), wxT("default"));
 					codec_supported = false;
                     for(size_t c=0; c<supported_codecs.Count(); c++)
                     {
@@ -2847,7 +2847,7 @@ bool AVConvGUIFrame::VerifySettings()
                     warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu, Stream=%lu"), (unsigned long)t, (unsigned long)f, (unsigned long)s);
                     
 					supported_codecs = Libav::FormatSubtitleCodecs(EncodingTasks[t]->OutputFormat);
-					selected_codec = sSettings->Codec.BeforeFirst(' ');
+					selected_codec = FormatFromSetting(sSettings->Codec.BeforeFirst(' '), wxT("default"));
 					codec_supported = false;
                     for(size_t c=0; c<supported_codecs.Count(); c++)
                     {
