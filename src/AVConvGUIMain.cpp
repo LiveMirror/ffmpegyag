@@ -153,7 +153,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ListCtrlTasks = new wxListCtrl(this, ID_LISTCTRL1, wxDefaultPosition, wxDefaultSize, wxLC_REPORT, wxDefaultValidator, _T("ID_LISTCTRL1"));
     ListCtrlTasks->SetMinSize(wxSize(400,-1));
     wxListItem col;
-    col.SetText(wxT("Task (Source File)"));
+    col.SetText(wxT("Source File"));
     ListCtrlTasks->InsertColumn(0, col);
     col.SetAlign(wxLIST_FORMAT_RIGHT);
     col.SetText(wxT("Duration"));

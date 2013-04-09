@@ -18,25 +18,57 @@ void Libav::Init()
 {
     av_register_all();
 
-    // find best matching converter application (in the applications directory!)
+    // find converter application (in the application directory!)
 
-    ConverterApplication.Assign(wxStandardPaths::Get().GetExecutablePath());
+    ConverterApplication.Assign(wxStandardPaths::Get().GetExecutablePath()); // this will also set extension!
 
-	// primary choice
-	ConverterApplication.SetName(wxT("ffmpeg-x264-10bit"));
-	if(!ConverterApplication.FileExists())
-	{
-		// secondary choice
-		ConverterApplication.SetName(wxT("avconv-x264-10bit"));
-		if(!ConverterApplication.FileExists())
+    wxArrayString ConverterFiles;
+    wxArrayString ConverterLabels;
+    wxDir::GetAllFiles(ConverterApplication.GetPath(), &ConverterFiles, wxT("ffmpeg*"), wxDIR_FILES);
+    wxDir::GetAllFiles(ConverterApplication.GetPath(), &ConverterFiles, wxT("avconv*"), wxDIR_FILES);
+
+    for(long f=0; f<(long)ConverterFiles.GetCount(); f++)
+    {
+		if(ConverterFiles[f].IsSameAs(ConverterApplication.GetFullPath()))
 		{
-			// third choice
-			ConverterApplication.SetName(wxT("ffmpeg"));
-			if(!ConverterApplication.FileExists())
-			{
-				// fallback choice
-				ConverterApplication.SetName(wxT("avconv"));
-			}
+			ConverterFiles.RemoveAt(f);
+			f--;
+		}
+		else
+		{
+			//ConverterLabels.Add(wxFileName(ConverterFillastes[f]).GetFullName);
+			ConverterLabels.Add(ConverterFiles[f].AfterLast(wxFileName::GetPathSeparator()));
+		}
+	}
+
+	if(ConverterFiles.GetCount() > 1)
+	{
+		wxSingleChoiceDialog win(NULL, wxT("Multiple video converters have been found in the application directory.\nPlease select your prefered video converter:"), wxT("Select Video Converter"), ConverterLabels);
+		win.SetSelection(0);
+		if(win.ShowModal() == wxID_OK)
+		{
+			ConverterApplication.Assign(ConverterFiles[win.GetSelection()]);
+		}
+		else
+		{
+			ConverterFiles.Clear();
+			ConverterLabels.Clear();
+		}
+	}
+
+	if(ConverterFiles.GetCount() == 1)
+	{
+		ConverterApplication.Assign(ConverterFiles[0]);
+	}
+
+	if(ConverterFiles.GetCount() < 1)
+	{
+		ConverterApplication.SetName(wxT("ffmpeg")); // keep same extension as this application!
+		wxTextEntryDialog win(NULL, wxT("No video converter has been found in the application directory.\nPlease enter a custom video converter:"), wxT("Enter Video Converter"));
+		win.SetValue(ConverterApplication.GetFullPath());
+		if(win.ShowModal() == wxID_OK)
+		{
+			ConverterApplication.Assign(win.GetValue());
 		}
 	}
 

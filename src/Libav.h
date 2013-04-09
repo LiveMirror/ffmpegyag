@@ -3,9 +3,12 @@
 
 #include <wx/arrstr.h>
 #include <wx/hashmap.h>
+#include <wx/dir.h>
 #include <wx/file.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
+#include <wx/choicdlg.h>
+#include <wx/textdlg.h>
 
 #ifndef INT64_C
 #define INT64_C(c)	c ## L
