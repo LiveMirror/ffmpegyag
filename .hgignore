@@ -6,9 +6,10 @@ syntax: glob
 *.tar.gz
 config_debug.sh
 make-*
-makefile
-Makefile
+makefile*
+Makefile*
 *.bat
+*.cmd
 bin/*
 obj/*
 dist/linux/bin/ffmpegyag*
