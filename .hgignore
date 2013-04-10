@@ -10,7 +10,6 @@ makefile*
 Makefile*
 *.bat
 *.cmd
-bin/*
-obj/*
+obj
 dist/linux/bin/ffmpegyag
 dist/msw/bin/ffmpegyag.exe
