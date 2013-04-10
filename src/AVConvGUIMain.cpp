@@ -329,6 +329,8 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ComboBoxVideoBitrate->Append(_("2400k"));
     ComboBoxVideoBitrate->Append(_("3200k"));
     ComboBoxVideoBitrate->Append(_("4000k"));
+    ComboBoxVideoBitrate->Append(_("-crf 28"));
+    ComboBoxVideoBitrate->Append(_("-crf 26"));
     ComboBoxVideoBitrate->Append(_("-crf 24"));
     ComboBoxVideoBitrate->Append(_("-crf 22"));
     ComboBoxVideoBitrate->Append(_("-crf 20"));
@@ -389,6 +391,8 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     FlexGridSizerAudio->Add(StaticText10, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     ComboBoxAudioBitrate = new wxComboBox(this, ID_COMBOBOX5, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX5"));
     ComboBoxAudioBitrate->Append(_("default"));
+    ComboBoxAudioBitrate->Append(_("34k"));
+    ComboBoxAudioBitrate->Append(_("48k"));
     ComboBoxAudioBitrate->Append(_("64k"));
     ComboBoxAudioBitrate->Append(_("96k"));
     ComboBoxAudioBitrate->Append(_("128k"));
