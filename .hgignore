@@ -12,5 +12,5 @@ Makefile*
 *.cmd
 bin/*
 obj/*
-dist/linux/bin/ffmpegyag*
-dist/msw/bin/ffmpegyag*
+dist/linux/bin/ffmpegyag
+dist/msw/bin/ffmpegyag.exe

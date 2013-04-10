@@ -31,6 +31,7 @@
 
 #include "resource.h"
 #include "EncodingTask.h"
+#include "AVConvSettings.h"
 
 #define STR_DEFAULT wxT("default")
 #define STR_NO_CHANGE wxT("no change")
