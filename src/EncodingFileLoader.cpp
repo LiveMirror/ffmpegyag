@@ -24,11 +24,11 @@ EncodingFileLoader::EncodingFileLoader(wxFileName InputFile)
 
         if(avformat_open_input(&pFormatCtx, File.GetFullPath().ToUTF8().data(), NULL, NULL) == 0)
         {
-			pFormatCtx->flags |= 0x0040; //AVFMT_FLAG_NOBUFFER;
-			// FIXME: avformat_find_stream_info()
+            pFormatCtx->flags |= 0x0040; //AVFMT_FLAG_NOBUFFER;
+            // FIXME: avformat_find_stream_info()
 //            if(find_stream_info(pFormatCtx, NULL) > -1)
-			// try to get stream information by decoding some packets
-			if(avformat_find_stream_info(pFormatCtx, NULL) > -1)
+            // try to get stream information by decoding some packets
+            if(avformat_find_stream_info(pFormatCtx, NULL) > -1)
             {
                 FileDuration = (int64_t)1000 * (int64_t)pFormatCtx->duration / (int64_t)AV_TIME_BASE;
 
@@ -104,11 +104,11 @@ EncodingFileLoader::EncodingFileLoader(wxFileName InputFile)
 
                             if(vpkt_count%100 == 0)
                             {
-								// set progressbar to packet time in seconds
-								if(!ProgressDialog->Update((int)(((int64_t)packet.pts - (int64_t)stream->start_time) * (int64_t)stream->time_base.num / (int64_t)stream->time_base.den)))
-								{
-									break;
-								}
+                                // set progressbar to packet time in seconds
+                                if(!ProgressDialog->Update((int)(((int64_t)packet.pts - (int64_t)stream->start_time) * (int64_t)stream->time_base.num / (int64_t)stream->time_base.den)))
+                                {
+                                    break;
+                                }
                             }
 
                             // add this packet to the corresponding video stream
@@ -408,8 +408,8 @@ EncodingFileLoader::EncodingFileLoader(wxFileName InputFile)
                 ProgressDialog->Close();
                 wxDELETE(ProgressDialog);
             }
-		}
-	}
+        }
+    }
 }
 
 EncodingFileLoader::~EncodingFileLoader()
@@ -586,9 +586,9 @@ int64_t EncodingFileLoader::GetTimeFromTimestamp(long VideoStreamIndex, int64_t 
 
 int64_t EncodingFileLoader::GetTimestampFromTime(long VideoStreamIndex, int64_t Time)
 {
-	if(pFormatCtx)
+    if(pFormatCtx)
     {
-		return Time * (int64_t)pFormatCtx->streams[VideoStreams[VideoStreamIndex]->ID]->time_base.den / (int64_t)pFormatCtx->streams[VideoStreams[VideoStreamIndex]->ID]->time_base.num / 1000 + VideoStreams[VideoStreamIndex]->IndexEntries[0]->Timestamp;
+        return Time * (int64_t)pFormatCtx->streams[VideoStreams[VideoStreamIndex]->ID]->time_base.den / (int64_t)pFormatCtx->streams[VideoStreams[VideoStreamIndex]->ID]->time_base.num / 1000 + VideoStreams[VideoStreamIndex]->IndexEntries[0]->Timestamp;
     }
     return (int64_t)0;
 }
@@ -603,12 +603,12 @@ VideoFrame* EncodingFileLoader::GetVideoFrameData(long VideoStreamIndex, long Fr
     int64_t Timestamp;
     if(FrameIndex < (long)VideoStreams[VideoStreamIndex]->IndexEntries.GetCount())
     {
-		Timestamp = VideoStreams[VideoStreamIndex]->IndexEntries[FrameIndex]->Timestamp;
-	}
-	else
-	{
-		Timestamp = GetTimestampFromTime(VideoStreamIndex, VideoStreams[VideoStreamIndex]->Duration) + 1; // +1 to prevent rounding errors of integer timestamps (1,2,3,4,...)
-	}
+        Timestamp = VideoStreams[VideoStreamIndex]->IndexEntries[FrameIndex]->Timestamp;
+    }
+    else
+    {
+        Timestamp = GetTimestampFromTime(VideoStreamIndex, VideoStreams[VideoStreamIndex]->Duration) + 1; // +1 to prevent rounding errors of integer timestamps (1,2,3,4,...)
+    }
 
     long KeyframeIndex = SeekKeyFrameIndex(VideoStreamIndex, FrameIndex);
     int64_t KeyframeTimestamp = -1;
@@ -639,7 +639,7 @@ VideoFrame* EncodingFileLoader::GetVideoFrameData(long VideoStreamIndex, long Fr
         }
         avcodec_flush_buffers(pCodecCtx);
         GOPBuffer.SetID(KeyframeIndex);
-		//printf("\nNEW GOP\n");
+        //printf("\nNEW GOP\n");
     }
 
     if(GOPBuffer.GetLastTimestamp() < Timestamp)
@@ -656,148 +656,82 @@ VideoFrame* EncodingFileLoader::GetVideoFrameData(long VideoStreamIndex, long Fr
             avpicture_fill((AVPicture*)pFrameTarget, Buffer, TargetPixelFormat, TargetWidth, TargetHeight);
 
             AVPacket packet;
+            av_init_packet(&packet);
             int got_frame;
             int64_t FrameTimestamp = Timestamp-1;
 
-			// read packets/frames from file
-            while(FrameTimestamp < Timestamp && !av_read_frame(pFormatCtx, &packet))
+            // read packets/frames from file
+            while(FrameTimestamp < Timestamp)
             {
+                // reached end of file?
+                if(av_read_frame(pFormatCtx, &packet))
+                {
+                    // codec buffer still hold frames?
+                    if(got_frame)
+                    {
+                        // prepare 'flush' packet to receive the
+                        // remaining frames from the codec buffer
+                        packet.data = NULL;
+                        packet.size = 0;
+                        packet.stream_index = StreamID;
+                    }
+                    else
+                    {
+                        break; // leave loop
+                    }
+                }
+
                 if(packet.stream_index == StreamID)
                 {
-                    if(avcodec_decode_video2(pCodecCtx, pFrameSource, &got_frame, &packet) > 0)
+                    // avcodec_decode_video()
+                    // > 0, packet decoded to frame
+                    // = 0, not decoded (i.e. read from codec buffer)
+                    // < 0, error
+                    if(avcodec_decode_video2(pCodecCtx, pFrameSource, &got_frame, &packet) > -1)
                     {
-						if(got_frame)
-						{
-							// exclude b-frames that belongs to the previous gop, but where ordered after i-frame from this gop (higher dts but lower pts)
-							// first frame in gop must be i-frame
-							if(GOPBuffer.GetCount() > 0 || pFrameSource->pict_type == 1)
-							{
-								FrameTimestamp = pFrameSource->pkt_pts;
-								if(FrameTimestamp == (int64_t)AV_NOPTS_VALUE)
-								{
-									FrameTimestamp = pFrameSource->pkt_dts;
-								}
+                        if(got_frame)
+                        {
+                            // exclude b-frames that belongs to the previous gop, but where ordered after i-frame from this gop (higher dts but lower pts)
+                            // first frame in gop must be i-frame
+                            if(GOPBuffer.GetCount() > 0 || pFrameSource->pict_type == 1)
+                            {
+                                FrameTimestamp = pFrameSource->pkt_pts;
+                                if(FrameTimestamp == (int64_t)AV_NOPTS_VALUE)
+                                {
+                                    FrameTimestamp = pFrameSource->pkt_dts;
+                                }
 
-								if(pSwsCtx != NULL)
-								{
-									sws_scale(pSwsCtx, pFrameSource->data, pFrameSource->linesize, 0, pCodecCtx->height, pFrameTarget->data, pFrameTarget->linesize);
+                                if(pSwsCtx != NULL)
+                                {
+                                    sws_scale(pSwsCtx, pFrameSource->data, pFrameSource->linesize, 0, pCodecCtx->height, pFrameTarget->data, pFrameTarget->linesize);
 
-									// NOTE: it seems the rgb buffer from pFrameTarget->data[0] cannot be used as pointer (freed internally), so we have to copy it
-									VideoFrame* tex = new VideoFrame(FrameTimestamp, GetTimeFromTimestamp(VideoStreamIndex, FrameTimestamp), TargetWidth, TargetHeight, TargetPixelFormat, pFrameSource->pict_type, (unsigned char*)av_malloc(avpicture_get_size(TargetPixelFormat, TargetWidth, TargetHeight)));
-									memcpy(tex->Data, pFrameTarget->data[0], tex->DataSize);
-									GOPBuffer.AddVideoFrame(tex);
-									tex = NULL;
-								}
-							}
-							else
-							{
-								//printf("skipped (%i), packet-pts: %lu, requested-pts: %lu, frame-pts: %lu\n", pFrameSource->pict_type, packet.pts, Timestamp, pFrameSource->pkt_pts);
-							}
+                                    // NOTE: it seems the rgb buffer from pFrameTarget->data[0] cannot be used as pointer (freed internally), so we have to copy it
+                                    VideoFrame* tex = new VideoFrame(FrameTimestamp, GetTimeFromTimestamp(VideoStreamIndex, FrameTimestamp), TargetWidth, TargetHeight, TargetPixelFormat, pFrameSource->pict_type, (unsigned char*)av_malloc(avpicture_get_size(TargetPixelFormat, TargetWidth, TargetHeight)));
+                                    memcpy(tex->Data, pFrameTarget->data[0], tex->DataSize);
+                                    GOPBuffer.AddVideoFrame(tex);
+                                    tex = NULL;
+                                }
+                            }
+                            else
+                            {
+                                //printf("skipped (%i), packet-pts: %lu, requested-pts: %lu, frame-pts: %lu\n", pFrameSource->pict_type, packet.pts, Timestamp, pFrameSource->pkt_pts);
+                            }
 
-							//printf("finished (%i), packet-pts: %lu, requested-pts: %lu, frame-pts: %lu\n", pFrameSource->pict_type, packet.pts, Timestamp, pFrameSource->pkt_pts);
-						}
-						else
-						{
-							//printf("unfinished, packet-pts: %lu, packet-dts: %lu\n", packet.pts, packet.dts);
-						}
-					}
-					else
-					{
-						//printf("frame error\n");
-					}
+                            //printf("finished (%i), packet-pts: %lu, requested-pts: %lu, frame-pts: %lu\n", pFrameSource->pict_type, packet.pts, Timestamp, pFrameSource->pkt_pts);
+                        }
+                        else
+                        {
+                            //printf("unfinished, packet-pts: %lu, packet-dts: %lu\n", packet.pts, packet.dts);
+                        }
+                    }
+                    else
+                    {
+                        //printf("frame error\n");
+                    }
                 }
-                av_free_packet(&packet);
             }
-            
-            if(FrameTimestamp < Timestamp) {
-				//printf("MISSING FRAMES FROM BUFFER\n");
-				//AVFrame* pFrameDecoded = avcodec_alloc_frame();
-				AVPacket empty_packet;
-				av_init_packet(&empty_packet);
-got_frame = 1;
-				while(got_frame) {
-
-					avcodec_decode_video2(pCodecCtx, pFrameSource, &got_frame, &empty_packet);
-
-					if(got_frame) {
-						//printf("  USE EMPTY PACKET => frame.pts=%lu\n", pFrameSource->pkt_pts);
-					}
-					else {
-						//printf("  DECODING DONE\n");
-					}
-				}
-			}
-
-/*
-if(FrameTimestamp < Timestamp)
-{
-	AVFrame *pFrameDecoded = avcodec_alloc_frame();
-	AVPacket empty_packet;
-	av_init_packet(&empty_packet);
-			
-	got_frame = 1;
-	printf("\nREAD BUFFER: frame.pts=%lu, request.pts=%lu, got_frame=%i\n\n", FrameTimestamp, Timestamp, got_frame);
-	while(got_frame)
-	{
-		if(pCodecCtx && pFrameSource)
-		{
-			avcodec_decode_video2(pCodecCtx, pFrameDecoded, &got_frame, &empty_packet);
-		}
-		else
-		{
-			printf("NULLn");
-		}
-		printf("X\n");
-		break;
-	}
-	
-	while(false && FrameTimestamp < Timestamp && got_frame)
-	{
-
-		avcodec_decode_video2(pCodecCtx, pFrameSource, &got_frame, &empty_packet);
-
-		if(got_frame)
-		{
-			FrameTimestamp = pFrameSource->pkt_pts;
-
-			// exclude b-frames that belongs to the previous gop, but where ordered after i-frame from this gop (higher dts but lower pts)
-			// first frame in gop must be i-frame
-			if(GOPBuffer.GetCount() > 0 || pFrameSource->pict_type == 1)
-			{
-				FrameTimestamp = pFrameSource->pkt_pts;
-				//FrameTimestamp = packet.pts;
-				if(FrameTimestamp == (int64_t)AV_NOPTS_VALUE)
-				{
-					FrameTimestamp = pFrameSource->pkt_dts;
-					//FrameTimestamp = packet.dts;
-				}
-
-				if(pSwsCtx != NULL)
-				{
-					sws_scale(pSwsCtx, pFrameSource->data, pFrameSource->linesize, 0, pCodecCtx->height, pFrameTarget->data, pFrameTarget->linesize);
-
-					// NOTE: it seems the rgb buffer from pFrameTarget->data[0] cannot be used as pointer (freed internally), so we have to copy it
-					VideoFrame* tex = new VideoFrame(FrameTimestamp, GetTimeFromTimestamp(VideoStreamIndex, FrameTimestamp), TargetWidth, TargetHeight, TargetPixelFormat, pFrameSource->pict_type, (unsigned char*)av_malloc(avpicture_get_size(TargetPixelFormat, TargetWidth, TargetHeight)));
-					memcpy(tex->Data, pFrameTarget->data[0], tex->DataSize);
-					GOPBuffer.AddVideoFrame(tex);
-					tex = NULL;
-				}
-			}
-			else
-			{
-				//printf("skipped (%i), packet-pts: %lu, requested-pts: %lu, frame-pts: %lu\n", pFrameSource->pict_type, packet.pts, Timestamp, pFrameSource->pkt_pts);
-			}
-
-			printf("  USE EMPTY PACKET => frame.pts=%lu\n", pFrameSource->pkt_pts);
-		}
-		else
-		{
-			printf("  DECODING DONE\n");
-		}
-	}
-}
-*/
-			sws_freeContext(pSwsCtx);
+            av_free_packet(&packet);
+            sws_freeContext(pSwsCtx);
             av_free(Buffer);
         }
         av_free(pFrameTarget);
