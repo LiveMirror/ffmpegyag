@@ -2584,16 +2584,21 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                         // audio || subtitle
                         if(Line.IsEmpty())
                         {
-                            StatusBar->SetStatusText(wxT("Time: ") + Time + wxT("s, Size: ") + Size + wxT(", ") + Bitrate, 1);
+                            StatusBar->SetStatusText(wxT("Time: ") + Time + wxT(", Size: ") + Size + wxT(", ") + Bitrate, 1);
                         }
                         // video && (audio || subtitle)
                         else
                         {
-                            Framerate = Line.AfterLast('=');
-                            Line = Line.BeforeLast('f');
-                            Frame = Line.AfterLast('=');
+                            // assume frame is between "frame=" and "fps="
+							pos_start = Line.find(wxT("frame="), 0) + 6;
+							pos_end = Line.find(wxT("fps="), pos_start);
+							Frame = Line.Mid(pos_start, pos_end - pos_start);
+							// assume framerate is between "fps=" and "q="
+							pos_start = Line.find(wxT("fps="), 0) + 4;
+							pos_end = Line.find(wxT("q="), pos_start);
+							Framerate = Line.Mid(pos_start, pos_end - pos_start);
 
-                            StatusBar->SetStatusText(wxT("Frame: ") + Frame + wxT(", Time: ") + Time + wxT("s, Size: ") + Size + wxT(", ") + Framerate + wxT("fps, ") + Bitrate, 1);
+                            StatusBar->SetStatusText(wxT("Frame: ") + Frame + wxT(", Time: ") + Time + wxT(", Size: ") + Size + wxT(", ") + Framerate + wxT("fps, ") + Bitrate, 1);
                         }
 
                         wxMilliSleep(50);
