@@ -639,7 +639,7 @@ VideoFrame* EncodingFileLoader::GetVideoFrameData(long VideoStreamIndex, long Fr
         }
         avcodec_flush_buffers(pCodecCtx);
         GOPBuffer.SetID(KeyframeIndex);
-		printf("\nNEW GOP\n");
+		//printf("\nNEW GOP\n");
     }
 
     if(GOPBuffer.GetLastTimestamp() < Timestamp)
@@ -694,11 +694,11 @@ VideoFrame* EncodingFileLoader::GetVideoFrameData(long VideoStreamIndex, long Fr
 								//printf("skipped (%i), packet-pts: %lu, requested-pts: %lu, frame-pts: %lu\n", pFrameSource->pict_type, packet.pts, Timestamp, pFrameSource->pkt_pts);
 							}
 
-							printf("finished (%i), packet-pts: %lu, requested-pts: %lu, frame-pts: %lu\n", pFrameSource->pict_type, packet.pts, Timestamp, pFrameSource->pkt_pts);
+							//printf("finished (%i), packet-pts: %lu, requested-pts: %lu, frame-pts: %lu\n", pFrameSource->pict_type, packet.pts, Timestamp, pFrameSource->pkt_pts);
 						}
 						else
 						{
-							printf("unfinished, packet-pts: %lu, packet-dts: %lu\n", packet.pts, packet.dts);
+							//printf("unfinished, packet-pts: %lu, packet-dts: %lu\n", packet.pts, packet.dts);
 						}
 					}
 					else
@@ -708,6 +708,25 @@ VideoFrame* EncodingFileLoader::GetVideoFrameData(long VideoStreamIndex, long Fr
                 }
                 av_free_packet(&packet);
             }
+            
+            if(FrameTimestamp < Timestamp) {
+				//printf("MISSING FRAMES FROM BUFFER\n");
+				//AVFrame* pFrameDecoded = avcodec_alloc_frame();
+				AVPacket empty_packet;
+				av_init_packet(&empty_packet);
+got_frame = 1;
+				while(got_frame) {
+
+					avcodec_decode_video2(pCodecCtx, pFrameSource, &got_frame, &empty_packet);
+
+					if(got_frame) {
+						//printf("  USE EMPTY PACKET => frame.pts=%lu\n", pFrameSource->pkt_pts);
+					}
+					else {
+						//printf("  DECODING DONE\n");
+					}
+				}
+			}
 
 /*
 if(FrameTimestamp < Timestamp)
