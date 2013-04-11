@@ -106,8 +106,8 @@ wxArrayString EncodingTask::GetCommands()
 
 wxString EncodingTask::GetCommandAVConv(wxString OutputFileName, wxString StartTime, wxString Duration, Pass PassNumber)
 {
-	wxString Seperator = wxFileName::GetPathSeparator();
-	wxString Command = wxT("\"") + Libav::ConverterApplication.GetFullPath() + wxT("\"");
+    wxString Seperator = wxFileName::GetPathSeparator();
+    wxString Command = wxT("\"") + Libav::ConverterApplication.GetFullPath() + wxT("\"");
 
     AVMediaFlags SupportedMediaFlags = Libav::FormatMediaMap[OutputFormat]; // AVMEDIA_FLAG_VIDEO
 
@@ -322,14 +322,14 @@ wxString EncodingTask::GetCommandAVConv(wxString OutputFileName, wxString StartT
                         {
                             if(!InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate.IsEmpty())
                             {
-								if(InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate.StartsWith(wxT("-crf")))
-								{
-									Command.Append(wxString::Format(wxT(" ") + InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate));
-								}
-								else
-								{
-									Command.Append(wxString::Format(wxT(" -b:v:%i ") + InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate, vid_count));
-								}
+                                if(InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate.StartsWith(wxT("-crf")))
+                                {
+                                    Command.Append(wxString::Format(wxT(" ") + InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate));
+                                }
+                                else
+                                {
+                                    Command.Append(wxString::Format(wxT(" -b:v:%i ") + InputFiles[f]->VideoStreams[v]->EncodingSettings.Bitrate, vid_count));
+                                }
                             }
                             if(!InputFiles[f]->VideoStreams[v]->EncodingSettings.FrameRate.IsEmpty())
                             {

@@ -26,51 +26,52 @@ void Libav::Init()
     wxArrayString ConverterLabels;
     wxDir::GetAllFiles(ConverterApplication.GetPath(), &ConverterFiles, wxT("ffmpeg*"), wxDIR_FILES);
     wxDir::GetAllFiles(ConverterApplication.GetPath(), &ConverterFiles, wxT("avconv*"), wxDIR_FILES);
+    // TODO: when on linux and none is found, try bin path' '/bin', '/usr/bin', '/usr/local/bin'
 
     for(long f=0; f<(long)ConverterFiles.GetCount(); f++)
     {
-		if(ConverterFiles[f].IsSameAs(ConverterApplication.GetFullPath()))
-		{
-			ConverterFiles.RemoveAt(f);
-			f--;
-		}
-		else
-		{
-			//ConverterLabels.Add(wxFileName(ConverterFillastes[f]).GetFullName);
-			ConverterLabels.Add(ConverterFiles[f].AfterLast(wxFileName::GetPathSeparator()));
-		}
-	}
+        if(ConverterFiles[f].IsSameAs(ConverterApplication.GetFullPath()))
+        {
+            ConverterFiles.RemoveAt(f);
+            f--;
+        }
+        else
+        {
+            //ConverterLabels.Add(wxFileName(ConverterFillastes[f]).GetFullName);
+            ConverterLabels.Add(ConverterFiles[f].AfterLast(wxFileName::GetPathSeparator()));
+        }
+    }
 
-	if(ConverterFiles.GetCount() > 1)
-	{
-		wxSingleChoiceDialog win(NULL, wxT("Multiple video converters have been found in the application directory.\nPlease select your prefered video converter:"), wxT("Select Video Converter"), ConverterLabels);
-		win.SetSelection(0);
-		if(win.ShowModal() == wxID_OK)
-		{
-			ConverterApplication.Assign(ConverterFiles[win.GetSelection()]);
-		}
-		else
-		{
-			ConverterFiles.Clear();
-			ConverterLabels.Clear();
-		}
-	}
+    if(ConverterFiles.GetCount() > 1)
+    {
+        wxSingleChoiceDialog win(NULL, wxT("Multiple video converters have been found in the application directory.\nPlease select your prefered video converter:"), wxT("Select Video Converter"), ConverterLabels);
+        win.SetSelection(0);
+        if(win.ShowModal() == wxID_OK)
+        {
+            ConverterApplication.Assign(ConverterFiles[win.GetSelection()]);
+        }
+        else
+        {
+            ConverterFiles.Clear();
+            ConverterLabels.Clear();
+        }
+    }
 
-	if(ConverterFiles.GetCount() == 1)
-	{
-		ConverterApplication.Assign(ConverterFiles[0]);
-	}
+    if(ConverterFiles.GetCount() == 1)
+    {
+        ConverterApplication.Assign(ConverterFiles[0]);
+    }
 
-	if(ConverterFiles.GetCount() < 1)
-	{
-		ConverterApplication.SetName(wxT("ffmpeg")); // keep same extension as this application!
-		wxTextEntryDialog win(NULL, wxT("No video converter has been found in the application directory.\nPlease enter a custom video converter:"), wxT("Enter Video Converter"));
-		win.SetValue(ConverterApplication.GetFullPath());
-		if(win.ShowModal() == wxID_OK)
-		{
-			ConverterApplication.Assign(win.GetValue());
-		}
-	}
+    if(ConverterFiles.GetCount() < 1)
+    {
+        ConverterApplication.SetName(wxT("ffmpeg")); // keep same extension as this application!
+        wxTextEntryDialog win(NULL, wxT("No video converter has been found in the application directory.\nPlease enter a custom video converter:"), wxT("Enter Video Converter"));
+        win.SetValue(ConverterApplication.GetFullPath());
+        if(win.ShowModal() == wxID_OK)
+        {
+            ConverterApplication.Assign(win.GetValue());
+        }
+    }
 
     // initialize codec members
 
@@ -397,192 +398,192 @@ wxString Libav::MilliToString(int64_t MilliSeconds)
 
 wxArrayString Libav::FormatVideoCodecs(wxString ContainerFormat)
 {
-	wxArrayString codecs;
+    wxArrayString codecs;
 
-	codecs.Add(wxT("default"));
-	codecs.Add(wxT("copy"));
+    codecs.Add(wxT("default"));
+    codecs.Add(wxT("copy"));
 
-	if(ContainerFormat.IsSameAs(wxT("matroska")))
-	{
-		codecs.Add(wxT("libx264"));
-		codecs.Add(wxT("libxvid"));
-		codecs.Add(wxT("libvpx"));
-		codecs.Add(wxT("mpeg4"));
-		codecs.Add(wxT("mpeg1video"));
-		codecs.Add(wxT("mpeg2video"));
-	}
+    if(ContainerFormat.IsSameAs(wxT("matroska")))
+    {
+        codecs.Add(wxT("libx264"));
+        codecs.Add(wxT("libxvid"));
+        codecs.Add(wxT("libvpx"));
+        codecs.Add(wxT("mpeg4"));
+        codecs.Add(wxT("mpeg1video"));
+        codecs.Add(wxT("mpeg2video"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("mp4")))
     {
-		codecs.Add(wxT("libx264"));
-		codecs.Add(wxT("libxvid"));
-		codecs.Add(wxT("libvpx"));
-		codecs.Add(wxT("mpeg4"));
-		codecs.Add(wxT("mpeg1video"));
-		codecs.Add(wxT("mpeg2video"));
-	}
+        codecs.Add(wxT("libx264"));
+        codecs.Add(wxT("libxvid"));
+        codecs.Add(wxT("libvpx"));
+        codecs.Add(wxT("mpeg4"));
+        codecs.Add(wxT("mpeg1video"));
+        codecs.Add(wxT("mpeg2video"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("mov")))
     {
-		codecs.Add(wxT("libx264"));
-		codecs.Add(wxT("libxvid"));
-		codecs.Add(wxT("libvpx"));
-		codecs.Add(wxT("mpeg4"));
-		codecs.Add(wxT("mpeg1video"));
-		codecs.Add(wxT("mpeg2video"));
-	}
+        codecs.Add(wxT("libx264"));
+        codecs.Add(wxT("libxvid"));
+        codecs.Add(wxT("libvpx"));
+        codecs.Add(wxT("mpeg4"));
+        codecs.Add(wxT("mpeg1video"));
+        codecs.Add(wxT("mpeg2video"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("ogg")))
     {
-		codecs.Add(wxT("libtheora"));
-	}
+        codecs.Add(wxT("libtheora"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("webm")))
     {
-		codecs.Add(wxT("libvpx"));
-	}
+        codecs.Add(wxT("libvpx"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("mpeg")))
     {
-		codecs.Add(wxT("mpeg1video"));
-		codecs.Add(wxT("mpeg2video"));
-	}
+        codecs.Add(wxT("mpeg1video"));
+        codecs.Add(wxT("mpeg2video"));
+    }
 
-	return codecs;
+    return codecs;
 }
 
 wxArrayString Libav::FormatAudioCodecs(wxString ContainerFormat)
 {
-	wxArrayString codecs;
+    wxArrayString codecs;
 
-	codecs.Add(wxT("default"));
-	codecs.Add(wxT("copy"));
+    codecs.Add(wxT("default"));
+    codecs.Add(wxT("copy"));
 
     if(ContainerFormat.IsSameAs(wxT("matroska")))
     {
-		codecs.Add(wxT("libfdk_aac"));
-		codecs.Add(wxT("libfaac"));
-		codecs.Add(wxT("aac"));
-		codecs.Add(wxT("ac3"));
-		codecs.Add(wxT("flac"));
-		codecs.Add(wxT("mp2"));
-		codecs.Add(wxT("libvorbis"));
-		codecs.Add(wxT("libmp3lame"));
-		codecs.Add(wxT("adpcm_ima_wav"));
-	}
+        codecs.Add(wxT("libfdk_aac"));
+        codecs.Add(wxT("libfaac"));
+        codecs.Add(wxT("aac"));
+        codecs.Add(wxT("ac3"));
+        codecs.Add(wxT("flac"));
+        codecs.Add(wxT("mp2"));
+        codecs.Add(wxT("libvorbis"));
+        codecs.Add(wxT("libmp3lame"));
+        codecs.Add(wxT("adpcm_ima_wav"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("mp4")))
     {
-		codecs.Add(wxT("libfdk_aac"));
-		codecs.Add(wxT("libfaac"));
-		codecs.Add(wxT("aac"));
-		codecs.Add(wxT("ac3"));
-		codecs.Add(wxT("flac"));
-		codecs.Add(wxT("mp2"));
-		codecs.Add(wxT("libvorbis"));
-		codecs.Add(wxT("libmp3lame"));
-		codecs.Add(wxT("adpcm_ima_wav"));
-	}
+        codecs.Add(wxT("libfdk_aac"));
+        codecs.Add(wxT("libfaac"));
+        codecs.Add(wxT("aac"));
+        codecs.Add(wxT("ac3"));
+        codecs.Add(wxT("flac"));
+        codecs.Add(wxT("mp2"));
+        codecs.Add(wxT("libvorbis"));
+        codecs.Add(wxT("libmp3lame"));
+        codecs.Add(wxT("adpcm_ima_wav"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("mov")))
     {
-		codecs.Add(wxT("libfdk_aac"));
-		codecs.Add(wxT("libfaac"));
-		codecs.Add(wxT("aac"));
-		codecs.Add(wxT("ac3"));
-		codecs.Add(wxT("flac"));
-		codecs.Add(wxT("mp2"));
-		codecs.Add(wxT("libvorbis"));
-		codecs.Add(wxT("libmp3lame"));
-		codecs.Add(wxT("adpcm_ima_wav"));
-	}
+        codecs.Add(wxT("libfdk_aac"));
+        codecs.Add(wxT("libfaac"));
+        codecs.Add(wxT("aac"));
+        codecs.Add(wxT("ac3"));
+        codecs.Add(wxT("flac"));
+        codecs.Add(wxT("mp2"));
+        codecs.Add(wxT("libvorbis"));
+        codecs.Add(wxT("libmp3lame"));
+        codecs.Add(wxT("adpcm_ima_wav"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("ogg")))
     {
-		codecs.Add(wxT("flac"));
-		codecs.Add(wxT("libvorbis"));
-	}
+        codecs.Add(wxT("flac"));
+        codecs.Add(wxT("libvorbis"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("webm")))
     {
-		codecs.Add(wxT("libvorbis"));
-	}
+        codecs.Add(wxT("libvorbis"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("mpeg")))
     {
-		codecs.Add(wxT("mp2"));
-		codecs.Add(wxT("libmp3lame"));
-	}
+        codecs.Add(wxT("mp2"));
+        codecs.Add(wxT("libmp3lame"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("mp3")))
     {
-		codecs.Add(wxT("libmp3lame"));
-	}
+        codecs.Add(wxT("libmp3lame"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("ac3")))
     {
-		codecs.Add(wxT("ac3"));
-	}
+        codecs.Add(wxT("ac3"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("flac")))
     {
-		codecs.Add(wxT("flac"));
-	}
+        codecs.Add(wxT("flac"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("wav")))
     {
-		codecs.Add(wxT("adpcm_ima_wav"));
-	}
+        codecs.Add(wxT("adpcm_ima_wav"));
+    }
 
-	return codecs;
+    return codecs;
 }
 
 wxArrayString Libav::FormatSubtitleCodecs(wxString ContainerFormat)
 {
-	wxArrayString codecs;
+    wxArrayString codecs;
 
-	codecs.Add(wxT("default"));
-	codecs.Add(wxT("copy"));
+    codecs.Add(wxT("default"));
+    codecs.Add(wxT("copy"));
 
     if(ContainerFormat.IsSameAs(wxT("matroska")))
     {
-		codecs.Add(wxT("ass"));
-	}
+        codecs.Add(wxT("ass"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("mp4")))
     {
-		codecs.Add(wxT("ass"));
-	}
+        codecs.Add(wxT("ass"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("mov")))
     {
-		
-	}
+        
+    }
 
     if(ContainerFormat.IsSameAs(wxT("ogg")))
     {
-		
-	}
+        
+    }
 
     if(ContainerFormat.IsSameAs(wxT("webm")))
     {
-		
-	}
+        
+    }
 
     if(ContainerFormat.IsSameAs(wxT("mpeg")))
     {
-		
-	}
+        
+    }
 
     if(ContainerFormat.IsSameAs(wxT("ass")))
     {
-		codecs.Add(wxT("ass"));
-	}
+        codecs.Add(wxT("ass"));
+    }
 
     if(ContainerFormat.IsSameAs(wxT("srt")))
     {
-		
-	}
+        
+    }
 
-	return codecs;
+    return codecs;
 }

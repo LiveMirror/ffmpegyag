@@ -17,6 +17,7 @@
 #include <wx/frame.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/menu.h>
 //*)
 
 //#include <wx/dcclient.h>
@@ -92,6 +93,8 @@ class AVConvGUIFrame: public wxFrame
         void OnCheckListBoxSubtitleStreamsSelect(wxCommandEvent& event);
         void OnButtonScriptClick(wxCommandEvent& event);
         //*)
+        void OnMainWindowRClick(wxMouseEvent& event);
+        void OnMenuPresetsClick(wxCommandEvent& event);
 
         //(*Identifiers(AVConvGUIFrame)
         static const long ID_STATICTEXT8;
@@ -216,6 +219,7 @@ class AVConvGUIFrame: public wxFrame
         wxSpinCtrl* SpinCtrlLeft;
         wxStaticText* StaticText11;
         //*)
+        wxMenu* MenuPresets;
 
         bool AbortEncoding;
         EncodingTaskArray EncodingTasks;

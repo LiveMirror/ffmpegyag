@@ -160,11 +160,14 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ListCtrlTasks->InsertColumn(1, col);
     col.SetText(wxT("Size"));
     ListCtrlTasks->InsertColumn(2, col);
+    ListCtrlTasks->SetToolTip(_("List of all tasks that will be encoded. You can select a single task for editing, or select multiple tasks for mass editing. Depending on the differences in the selected tasks, there might be some limitations in mass editing (i.e. videos with different amount of audio tracks)."));
     FlexGridSizerJobList->Add(ListCtrlTasks, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     BoxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     ButtonAddTask = new wxButton(this, ID_BUTTON3, _("Add Tasks(s)..."), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON3"));
+    ButtonAddTask->SetToolTip(_("Add new task(s) to the list.\nTIP: Added task(s) will be initialized with the current FFmpegYAG settings. If you want to add multiple files with the same settings, it would be smart to make the 'master' setting before you add the files ;)"));
     BoxSizer4->Add(ButtonAddTask, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     ButtonRemoveTask = new wxButton(this, ID_BUTTON4, _("Remove Task(s)"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTON4"));
+    ButtonRemoveTask->SetToolTip(_("Remove the selected task(s) from the list."));
     BoxSizer4->Add(ButtonRemoveTask, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizerJobList->Add(BoxSizer4, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizer2->Add(FlexGridSizerJobList, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -182,11 +185,11 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     StaticText18->SetFont(StaticText18Font);
     FlexGridSizer4->Add(StaticText18, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     int GLCanvasAttributes_1[] = {
-    	WX_GL_RGBA,
-    	WX_GL_DOUBLEBUFFER,
-    	WX_GL_DEPTH_SIZE,      16,
-    	WX_GL_STENCIL_SIZE,    0,
-    	0, 0 };
+        WX_GL_RGBA,
+        WX_GL_DOUBLEBUFFER,
+        WX_GL_DEPTH_SIZE,      16,
+        WX_GL_STENCIL_SIZE,    0,
+        0, 0 };
     GLCanvasPreview = new wxGLCanvas(this, ID_GLCANVAS1, wxDefaultPosition, wxDefaultSize, 0, _T("ID_GLCANVAS1"), GLCanvasAttributes_1);
     GLCanvasPreview->SetMinSize(wxSize(280,140));
     GLCanvasPreview->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW));
@@ -210,6 +213,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     SpinCtrlLeft = new wxSpinCtrl(this, ID_SPINCTRL1, _T("0"), wxDefaultPosition, wxSize(60,24), 0, 0, 1024, 0, _T("ID_SPINCTRL1"));
     SpinCtrlLeft->SetValue(_T("0"));
     SpinCtrlLeft->Disable();
+    SpinCtrlLeft->SetToolTip(_("Crop the left side of the source video."));
     BoxSizer2->Add(SpinCtrlLeft, 1, wxALL|wxEXPAND|wxSHAPED|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizer3 = new wxFlexGridSizer(0, 1, 0, 0);
     FlexGridSizer3->AddGrowableCol(0);
@@ -217,6 +221,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     SpinCtrlTop = new wxSpinCtrl(this, ID_SPINCTRL2, _T("0"), wxDefaultPosition, wxSize(60,24), 0, 0, 1024, 0, _T("ID_SPINCTRL2"));
     SpinCtrlTop->SetValue(_T("0"));
     SpinCtrlTop->Disable();
+    SpinCtrlTop->SetToolTip(_("Crop the top of the source video."));
     FlexGridSizer3->Add(SpinCtrlTop, 1, wxTOP|wxBOTTOM|wxEXPAND|wxSHAPED|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticTextFrameSize = new wxStaticText(this, ID_STATICTEXT10, _("0000 x 0000"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT10"));
     StaticTextFrameSize->Disable();
@@ -224,11 +229,13 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     SpinCtrlBottom = new wxSpinCtrl(this, ID_SPINCTRL3, _T("0"), wxDefaultPosition, wxSize(60,24), 0, 0, 1024, 0, _T("ID_SPINCTRL3"));
     SpinCtrlBottom->SetValue(_T("0"));
     SpinCtrlBottom->Disable();
+    SpinCtrlBottom->SetToolTip(_("Crop the bottom of the source video."));
     FlexGridSizer3->Add(SpinCtrlBottom, 1, wxTOP|wxBOTTOM|wxEXPAND|wxSHAPED|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     BoxSizer2->Add(FlexGridSizer3, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     SpinCtrlRight = new wxSpinCtrl(this, ID_SPINCTRL4, _T("0"), wxDefaultPosition, wxSize(60,24), 0, 0, 1024, 0, _T("ID_SPINCTRL4"));
     SpinCtrlRight->SetValue(_T("0"));
     SpinCtrlRight->Disable();
+    SpinCtrlRight->SetToolTip(_("Crop the right side of the source video."));
     BoxSizer2->Add(SpinCtrlRight, 1, wxALL|wxEXPAND|wxSHAPED|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizerPreProcessing->Add(BoxSizer2, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     CheckBoxFileSegmentJoin = new wxCheckBox(this, ID_CHECKBOX1, _("Join File Segments"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX1"));
@@ -239,19 +246,24 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ListCtrlSegments->Disable();
     ListCtrlSegments->InsertColumn(0, wxT("From"));
     ListCtrlSegments->InsertColumn(1, wxT("To"));
+    ListCtrlSegments->SetToolTip(_("Segments are trimmed parts of the video.\nThis is useful if you want to extract one or more parts of the video (i.e. openeing and ending of an anime). This list shows a collection of all segments from the selected task. If the selected task has no segements, then the whole video will be encoded."));
     FlexGridSizerPreProcessing->Add(ListCtrlSegments, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     BoxSizer5 = new wxBoxSizer(wxHORIZONTAL);
     ButtonSegmentFrom = new wxButton(this, ID_BUTTON5, _("From {"), wxDefaultPosition, wxSize(60,24), 0, wxDefaultValidator, _T("ID_BUTTON5"));
     ButtonSegmentFrom->Disable();
+    ButtonSegmentFrom->SetToolTip(_("Set the start time of the selected segment to the current position of the preview."));
     BoxSizer5->Add(ButtonSegmentFrom, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     ButtonSegmentTo = new wxButton(this, ID_BUTTON6, _("} To"), wxDefaultPosition, wxSize(60,24), 0, wxDefaultValidator, _T("ID_BUTTON6"));
     ButtonSegmentTo->Disable();
+    ButtonSegmentTo->SetToolTip(_("Set the end time of the selected segment to the current position of the preview."));
     BoxSizer5->Add(ButtonSegmentTo, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     ButtonSegmentDelete = new wxButton(this, ID_BUTTON8, _("Del -"), wxDefaultPosition, wxSize(60,24), 0, wxDefaultValidator, _T("ID_BUTTON8"));
     ButtonSegmentDelete->Disable();
+    ButtonSegmentDelete->SetToolTip(_("Delete the selected segment from the selected task."));
     BoxSizer5->Add(ButtonSegmentDelete, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     ButtonSegmentAdd = new wxButton(this, ID_BUTTON7, _("Add +"), wxDefaultPosition, wxSize(60,24), 0, wxDefaultValidator, _T("ID_BUTTON7"));
     ButtonSegmentAdd->Disable();
+    ButtonSegmentAdd->SetToolTip(_("Add a new segment with the current position of the preview to the selected task."));
     BoxSizer5->Add(ButtonSegmentAdd, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizerPreProcessing->Add(BoxSizer5, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizerPreview->Add(FlexGridSizerPreProcessing, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -281,6 +293,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ComboBoxFileFormat->Append(_("ass"));
     ComboBoxFileFormat->Append(_("srt"));
     ComboBoxFileFormat->Append(_("image2"));
+    ComboBoxFileFormat->SetToolTip(_("No tooltip available"));
     FlexGridSizerFormat->Add(ComboBoxFileFormat, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticText15 = new wxStaticText(this, ID_STATICTEXT16, _("File"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT16"));
     StaticText15->Disable();
@@ -289,6 +302,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     FlexGridSizerFormat->Add(StaticText15, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     TextCtrlFileOut = new wxTextCtrl(this, ID_TEXTCTRL2, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2|wxTE_DONTWRAP, wxDefaultValidator, _T("ID_TEXTCTRL2"));
     TextCtrlFileOut->Disable();
+    TextCtrlFileOut->SetToolTip(_("No tooltip available"));
     FlexGridSizerFormat->Add(TextCtrlFileOut, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizer1->Add(FlexGridSizerFormat, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticLine3 = new wxStaticLine(this, ID_STATICLINE3, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL, _T("ID_STATICLINE3"));
@@ -308,6 +322,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     FlexGridSizer5->Add(StaticText2, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     CheckListBoxVideoStreams = new wxCheckListBox(this, ID_CHECKLISTBOX1, wxDefaultPosition, wxSize(0,72), 0, 0, wxLB_MULTIPLE, wxDefaultValidator, _T("ID_CHECKLISTBOX1"));
     CheckListBoxVideoStreams->Disable();
+    CheckListBoxVideoStreams->SetToolTip(_("List of available video streams from the selected task. If multiple tasks are selected this list shows only the 'common' streams (in case the tasks differ in the amount of video streams). Toggle the checkbox to decide which video stream(s) should be included for encoding. Select a stream(s) to change the corresponding encoding settings."));
     FlexGridSizer5->Add(CheckListBoxVideoStreams, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizerVideo = new wxFlexGridSizer(0, 2, 0, 0);
     FlexGridSizerVideo->AddGrowableCol(1);
@@ -315,9 +330,11 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     StaticText7->Disable();
     FlexGridSizerVideo->Add(StaticText7, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     ComboBoxVideoCodec = new wxComboBox(this, ID_COMBOBOX4, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX4"));
+    ComboBoxVideoCodec->SetToolTip(_("Set the codec for the selected video stream(s).\nTIP: This parameter is directly passed to ffmpeg, so you can append commandline options\n(i.e. 'libx264 -preset:v slow -tune:v animation')."));
     FlexGridSizerVideo->Add(ComboBoxVideoCodec, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticText13 = new wxStaticText(this, ID_STATICTEXT14, _("Bitrate:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT14"));
     StaticText13->Disable();
+    //StaticText13->SetToolTip(_("Bitrate for the selected video stream.\nHigher bitrates give better quality but increase the filesize.\nSome encoders like x264 supports CRF (constant rate factor).\nLower CRF values give better quality but increase the filesize."));
     FlexGridSizerVideo->Add(StaticText13, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     ComboBoxVideoBitrate = new wxComboBox(this, ID_COMBOBOX8, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX8"));
     ComboBoxVideoBitrate->Append(_("default"));
@@ -335,6 +352,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ComboBoxVideoBitrate->Append(_("-crf 22"));
     ComboBoxVideoBitrate->Append(_("-crf 20"));
     ComboBoxVideoBitrate->Append(_("-crf 18"));
+    ComboBoxVideoBitrate->SetToolTip(_("Set the bitrate for the selected video stream(s).\nHigher bitrates give better quality but increase the filesize.\nSome encoders like x264 supports CRF (constant rate factor).\nLower CRF values give better quality but increase the filesize."));
     FlexGridSizerVideo->Add(ComboBoxVideoBitrate, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticText14 = new wxStaticText(this, ID_STATICTEXT15, _("Frame Size:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT15"));
     StaticText14->Disable();
@@ -351,18 +369,20 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ComboBoxVideoFrameSize->Append(_("800x600"));
     ComboBoxVideoFrameSize->Append(_("768x576"));
     ComboBoxVideoFrameSize->Append(_("640x480"));
+    ComboBoxVideoFrameSize->SetToolTip(_("Set the resolution for the selected video stream(s).\nVideo will be scaled if this is different from the source."));
     FlexGridSizerVideo->Add(ComboBoxVideoFrameSize, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticText16 = new wxStaticText(this, ID_STATICTEXT17, _("Aspect Ratio:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT17"));
     StaticText16->Disable();
     FlexGridSizerVideo->Add(StaticText16, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     ComboBoxVideoAspectRatio = new wxComboBox(this, ID_COMBOBOX11, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX11"));
     ComboBoxVideoAspectRatio->SetSelection( ComboBoxVideoAspectRatio->Append(_("no change")) );
-    ComboBoxVideoAspectRatio->Append(_("24:10"));
+    ComboBoxVideoAspectRatio->Append(_("2.35"));
     ComboBoxVideoAspectRatio->Append(_("19:10"));
     ComboBoxVideoAspectRatio->Append(_("16:10"));
     ComboBoxVideoAspectRatio->Append(_("16:9"));
     ComboBoxVideoAspectRatio->Append(_("3:2"));
     ComboBoxVideoAspectRatio->Append(_("4:3"));
+    ComboBoxVideoAspectRatio->SetToolTip(_("Set the aspect ratio for the selected video stream(s). This is useful for playback, stretching the video to fit the given aspect ratio."));
     FlexGridSizerVideo->Add(ComboBoxVideoAspectRatio, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizer5->Add(FlexGridSizerVideo, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizerPostProcessing->Add(FlexGridSizer5, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -378,6 +398,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     FlexGridSizer6->Add(StaticText1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     CheckListBoxAudioStreams = new wxCheckListBox(this, ID_CHECKLISTBOX2, wxDefaultPosition, wxSize(0,72), 0, 0, wxLB_MULTIPLE, wxDefaultValidator, _T("ID_CHECKLISTBOX2"));
     CheckListBoxAudioStreams->Disable();
+    CheckListBoxAudioStreams->SetToolTip(_("No tooltip available"));
     FlexGridSizer6->Add(CheckListBoxAudioStreams, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizerAudio = new wxFlexGridSizer(0, 2, 0, 0);
     FlexGridSizerAudio->AddGrowableCol(1);
@@ -385,6 +406,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     StaticText4->Disable();
     FlexGridSizerAudio->Add(StaticText4, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     ComboBoxAudioCodec = new wxComboBox(this, ID_COMBOBOX1, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX1"));
+    ComboBoxAudioCodec->SetToolTip(_("No tooltip available"));
     FlexGridSizerAudio->Add(ComboBoxAudioCodec, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticText10 = new wxStaticText(this, ID_STATICTEXT11, _("Bitrate:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT11"));
     StaticText10->Disable();
@@ -401,6 +423,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ComboBoxAudioBitrate->Append(_("256k"));
     ComboBoxAudioBitrate->Append(_("384k"));
     ComboBoxAudioBitrate->Append(_("576k"));
+    ComboBoxAudioBitrate->SetToolTip(_("No tooltip available"));
     FlexGridSizerAudio->Add(ComboBoxAudioBitrate, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticText11 = new wxStaticText(this, ID_STATICTEXT12, _("Frequency:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT12"));
     StaticText11->Disable();
@@ -412,6 +435,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ComboBoxAudioFrequency->Append(_("44100"));
     ComboBoxAudioFrequency->Append(_("48000"));
     ComboBoxAudioFrequency->Append(_("96000"));
+    ComboBoxAudioFrequency->SetToolTip(_("No tooltip available"));
     FlexGridSizerAudio->Add(ComboBoxAudioFrequency, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticText12 = new wxStaticText(this, ID_STATICTEXT13, _("Channels:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT13"));
     StaticText12->Disable();
@@ -421,6 +445,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     ComboBoxAudioChannels->Append(_("1"));
     ComboBoxAudioChannels->Append(_("2"));
     ComboBoxAudioChannels->Append(_("6"));
+    ComboBoxAudioChannels->SetToolTip(_("No tooltip available"));
     FlexGridSizerAudio->Add(ComboBoxAudioChannels, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizer6->Add(FlexGridSizerAudio, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizerPostProcessing->Add(FlexGridSizer6, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -436,6 +461,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     FlexGridSizer7->Add(StaticText3, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     CheckListBoxSubtitleStreams = new wxCheckListBox(this, ID_CHECKLISTBOX3, wxDefaultPosition, wxSize(0,72), 0, 0, wxLB_MULTIPLE, wxDefaultValidator, _T("ID_CHECKLISTBOX3"));
     CheckListBoxSubtitleStreams->Disable();
+    CheckListBoxSubtitleStreams->SetToolTip(_("No tooltip available"));
     FlexGridSizer7->Add(CheckListBoxSubtitleStreams, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizerSubtitle = new wxFlexGridSizer(0, 2, 0, 0);
     FlexGridSizerSubtitle->AddGrowableCol(1);
@@ -443,6 +469,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     StaticText6->Disable();
     FlexGridSizerSubtitle->Add(StaticText6, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     ComboBoxSubtitleCodec = new wxComboBox(this, ID_COMBOBOX3, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX3"));
+    ComboBoxSubtitleCodec->SetToolTip(_("No tooltip available"));
     FlexGridSizerSubtitle->Add(ComboBoxSubtitleCodec, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizer7->Add(FlexGridSizerSubtitle, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizerPostProcessing->Add(FlexGridSizer7, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -469,13 +496,13 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     FileDialogSaveFile = new wxFileDialog(this, _("Select file"), wxEmptyString, wxEmptyString, wxFileSelectorDefaultWildcardStr, wxFD_SAVE, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
     FlexGridSizer1->Fit(this);
     FlexGridSizer1->SetSizeHints(this);
+    MenuPresets = new wxMenu(_("Load Preset"));
     Center();
 
     Connect(ID_LISTCTRL1,wxEVT_COMMAND_LIST_ITEM_SELECTED,(wxObjectEventFunction)&AVConvGUIFrame::OnListCtrlTasksItemSelect);
     Connect(ID_LISTCTRL1,wxEVT_COMMAND_LIST_ITEM_DESELECTED,(wxObjectEventFunction)&AVConvGUIFrame::OnListCtrlTasksItemSelect);
     Connect(ID_BUTTON3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&AVConvGUIFrame::OnButtonAddTaskClick);
     Connect(ID_BUTTON4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&AVConvGUIFrame::OnButtonRemoveTaskClick);
-    GLCanvasPreview->Connect(wxEVT_SIZE,(wxObjectEventFunction)&AVConvGUIFrame::OnGLCanvasPreviewResize,0,this);
     Connect(ID_SLIDER1,wxEVT_COMMAND_SLIDER_UPDATED,(wxObjectEventFunction)&AVConvGUIFrame::OnFrameScroll);
     Connect(ID_SPINCTRL1,wxEVT_COMMAND_SPINCTRL_UPDATED,(wxObjectEventFunction)&AVConvGUIFrame::OnSpinCtrlCropChange);
     Connect(ID_SPINCTRL2,wxEVT_COMMAND_SPINCTRL_UPDATED,(wxObjectEventFunction)&AVConvGUIFrame::OnSpinCtrlCropChange);
@@ -507,11 +534,14 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     Connect(ID_BUTTON9,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&AVConvGUIFrame::OnButtonScriptClick);
     Connect(wxEVT_SIZE,(wxObjectEventFunction)&AVConvGUIFrame::OnResize);
     //*)
+    GLCanvasPreview->Connect(wxEVT_SIZE,(wxObjectEventFunction)&AVConvGUIFrame::OnGLCanvasPreviewResize,0,this);
+    MenuPresets->Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&AVConvGUIFrame::OnMenuPresetsClick, NULL, this);
+    Connect(wxEVT_RIGHT_DOWN,(wxObjectEventFunction)&AVConvGUIFrame::OnMainWindowRClick);
 
-	ComboBoxFileFormat->SetValue(wxT("matroska"));
-	ComboBoxVideoCodec->SetValue(wxT("libx264"));
-	ComboBoxAudioCodec->SetValue(wxT("aac"));
-	ComboBoxSubtitleCodec->SetValue(wxT("copy"));
+    ComboBoxFileFormat->SetValue(wxT("matroska"));
+    ComboBoxVideoCodec->SetValue(wxT("libx264"));
+    ComboBoxAudioCodec->SetValue(wxT("aac"));
+    ComboBoxSubtitleCodec->SetValue(wxT("copy"));
     EnableDisableAVFormatControls();
 }
 
@@ -754,7 +784,7 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
     wxString Format = FormatToSetting(ComboBoxFileFormat->GetValue());
     if(true/*SelectedTaskIndices.GetCount() > 0*/)
     {
-		wxString selected_video_codec = ComboBoxVideoCodec->GetValue();
+        wxString selected_video_codec = ComboBoxVideoCodec->GetValue();
         ComboBoxVideoCodec->Clear();
         //ComboBoxVideoCodec->SetValue(wxEmptyString);
         wxString selected_audio_codec = ComboBoxAudioCodec->GetValue();
@@ -764,7 +794,7 @@ void AVConvGUIFrame::EnableDisableAVFormatControls()
         ComboBoxSubtitleCodec->Clear();
         //ComboBoxSubtitleCodec->SetValue(wxEmptyString);
 
-		AVMediaFlags MediaFlags = Libav::FormatMediaMap[Format];
+        AVMediaFlags MediaFlags = Libav::FormatMediaMap[Format];
 
         if(MediaFlags & AVMEDIA_FLAG_VIDEO)
         {
@@ -856,12 +886,12 @@ void AVConvGUIFrame::OnButtonAddTaskClick(wxCommandEvent& event)
         bool HadSelectedTasks = false;
         UpdateSelectedTaskIndices();
         if(SelectedTaskIndices.GetCount() > 0)
-		{
-			HadSelectedTasks = true;
-		}
-		// TODO: change selection behaviour on new added tasks
-		// never auto select new added tasks
-		// HadSelectedTasks = true;
+        {
+            HadSelectedTasks = true;
+        }
+        // TODO: change selection behaviour on new added tasks
+        // never auto select new added tasks
+        // HadSelectedTasks = true;
 
         ListCtrlTasks->Freeze();
 
@@ -1006,13 +1036,13 @@ void AVConvGUIFrame::OnButtonAddTaskClick(wxCommandEvent& event)
                     EncodingTasks.Add(EncTask);
                     EncTask = NULL;
                     
-					if(!HadSelectedTasks)
-					{
-						ListCtrlTasks->SetItemState(InsertIndex, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-						// TODO: change selection behaviour on new added tasks
-						// never auto select more then the first new added task
-						// HadSelectedTasks = true;
-					}
+                    if(!HadSelectedTasks)
+                    {
+                        ListCtrlTasks->SetItemState(InsertIndex, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+                        // TODO: change selection behaviour on new added tasks
+                        // never auto select more then the first new added task
+                        // HadSelectedTasks = true;
+                    }
                 }
                 else
                 {
@@ -1037,7 +1067,7 @@ void AVConvGUIFrame::OnButtonRemoveTaskClick(wxCommandEvent& event)
     ListCtrlTasks->Freeze();
     for(long i=SelectedTaskIndices.GetCount()-1; i>=0; i--)
     {
-		wxDELETE(EncodingTasks[SelectedTaskIndices[i]]); // destructor executes flush buffer
+        wxDELETE(EncodingTasks[SelectedTaskIndices[i]]); // destructor executes flush buffer
         EncodingTasks.RemoveAt(SelectedTaskIndices[i]);
         // triggers update of selected task indices on msw
         ListCtrlTasks->DeleteItem(SelectedTaskIndices[i]);
@@ -1441,8 +1471,8 @@ void AVConvGUIFrame::RenderFrame()
             
             if(Texture != NULL)
             {
-				// BOTTLENECK
-				TextCtrlTime->SetValue(Libav::MilliToString(Texture->Timecode) + wxT(" / ") + Libav::MilliToString(efl->VideoStreams[SelectedStream]->Duration) + wxT(" [") + Texture->GetPicType() + wxT("]"));
+                // BOTTLENECK
+                TextCtrlTime->SetValue(Libav::MilliToString(Texture->Timecode) + wxT(" / ") + Libav::MilliToString(efl->VideoStreams[SelectedStream]->Duration) + wxT(" [") + Texture->GetPicType() + wxT("]"));
 
                 int VideoWidth = efl->VideoStreams[SelectedStream]->Width;
                 int VideoHeight = efl->VideoStreams[SelectedStream]->Height;
@@ -1456,23 +1486,23 @@ void AVConvGUIFrame::RenderFrame()
                 int EncodingHeight;
                 if(!efl->VideoStreams[SelectedStream]->EncodingSettings.AspectRatio.IsEmpty())
                 {
-					double ar;
-					if(efl->VideoStreams[SelectedStream]->EncodingSettings.AspectRatio.Find(wxT(":")) > -1)
-					{
-						double ar_num;
-						double ar_den;
-						efl->VideoStreams[SelectedStream]->EncodingSettings.AspectRatio.BeforeFirst(':').ToDouble(&ar_num);
-						efl->VideoStreams[SelectedStream]->EncodingSettings.AspectRatio.AfterLast(':').ToDouble(&ar_den);
+                    double ar;
+                    if(efl->VideoStreams[SelectedStream]->EncodingSettings.AspectRatio.Find(wxT(":")) > -1)
+                    {
+                        double ar_num;
+                        double ar_den;
+                        efl->VideoStreams[SelectedStream]->EncodingSettings.AspectRatio.BeforeFirst(':').ToDouble(&ar_num);
+                        efl->VideoStreams[SelectedStream]->EncodingSettings.AspectRatio.AfterLast(':').ToDouble(&ar_den);
 
-						ar = ar_num / ar_den;
-					}
-					else
-					{
-						efl->VideoStreams[SelectedStream]->EncodingSettings.AspectRatio.ToDouble(&ar);
-					}
-					EncodingHeight = 720;
-					EncodingWidth = (int)(EncodingHeight * ar);
-				}
+                        ar = ar_num / ar_den;
+                    }
+                    else
+                    {
+                        efl->VideoStreams[SelectedStream]->EncodingSettings.AspectRatio.ToDouble(&ar);
+                    }
+                    EncodingHeight = 720;
+                    EncodingWidth = (int)(EncodingHeight * ar);
+                }
                 else if(!efl->VideoStreams[SelectedStream]->EncodingSettings.FrameSize.IsEmpty())
                 {
                     EncodingWidth = wxAtoi(efl->VideoStreams[SelectedStream]->EncodingSettings.FrameSize.BeforeFirst('x'));
@@ -1480,9 +1510,9 @@ void AVConvGUIFrame::RenderFrame()
                 }
                 else
                 {
-					EncodingWidth = VideoWidth-VideoCropLeft-VideoCropRight;
-					EncodingHeight = VideoHeight-VideoCropTop-VideoCropBottom;
-				}
+                    EncodingWidth = VideoWidth-VideoCropLeft-VideoCropRight;
+                    EncodingHeight = VideoHeight-VideoCropTop-VideoCropBottom;
+                }
                 // values are in uv representation (-1 to +1)
                 double GlPanelTop = double(EncodingHeight) / double(GlPanelHeight);
                 double GlPanelRight = double(EncodingWidth) / double(GlPanelWidth);
@@ -1549,8 +1579,8 @@ void AVConvGUIFrame::RenderFrame()
             }
             else
             {
-				TextCtrlTime->SetValue(Libav::MilliToString(efl->GetTimeFromFrame(SelectedStream, SelectedFrame)) + wxT(" / ") + Libav::MilliToString(efl->VideoStreams[SelectedStream]->Duration) + wxT(" []"));
-			}
+                TextCtrlTime->SetValue(Libav::MilliToString(efl->GetTimeFromFrame(SelectedStream, SelectedFrame)) + wxT(" / ") + Libav::MilliToString(efl->VideoStreams[SelectedStream]->Duration) + wxT(" []"));
+            }
 
             // dereference pointer (free is done by GOPBuffer)
             Texture = NULL;
@@ -2368,6 +2398,23 @@ void AVConvGUIFrame::OnComboBoxSubtitleCodecSelect(wxCommandEvent& event)
     //wxMessageBox(wxT("Subtitle Codec Changed"));
 }
 
+void AVConvGUIFrame::OnMenuPresetsClick(wxCommandEvent& event)
+{
+    // TODO: get menu entry and load presetvalues into controls
+    //event.GetId();
+    wxMessageBox(wxT("Preset"));
+}
+
+void AVConvGUIFrame::OnMainWindowRClick(wxMouseEvent& event)
+{
+    // TODO: generate menu entries
+    MenuPresets->Append(0,_("Test ID0"));
+    //MenuPresets->AppendSeparator();
+    MenuPresets->Append(1,_("Test ID1"));
+    this->PopupMenu(MenuPresets, event.GetPosition());
+    //wxMessageBox(wxT("PopupMenu"));
+}
+
 void AVConvGUIFrame::OnButtonScriptClick(wxCommandEvent& event)
 {
     #ifdef __LINUX__
@@ -2432,6 +2479,8 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
     wxTextFile LogFile;
     long StartTime = wxGetLocalTime();
 
+    size_t pos_start = 0;
+    size_t pos_end = 0;
     wxString Line;
     wxString Frame;
     wxString Time;
@@ -2498,14 +2547,14 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                     // ffmpeg uses 'q' keypress
                     //
                     // avconv uses signal handling to exit (ctrl+c / SIGINT)
-					wxProcess::Kill(TaskPID, wxSIGINT);
-					#endif
-					#ifdef __WINDOWS__
-					// ffmpeg uses 'q' keypress
-					//
-					// on windows ctrl+c signal is not working correctly, force kill
-					wxProcess::Kill(TaskPID, wxSIGKILL);
-					#endif
+                    wxProcess::Kill(TaskPID, wxSIGINT);
+                    #endif
+                    #ifdef __WINDOWS__
+                    // ffmpeg uses 'q' keypress
+                    //
+                    // on windows ctrl+c signal is not working correctly, force kill
+                    wxProcess::Kill(TaskPID, wxSIGKILL);
+                    #endif
                     LogFile.AddLine(wxT("ABORTED BY USER"));
                     // break to prevent kill called again...
                     break;
@@ -2517,14 +2566,21 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                     // status related line
                     if(Line.StartsWith(wxT("frame=")) || Line.StartsWith(wxT("size=")))
                     {
-                        Line.Replace(wxT(" "), wxEmptyString, true); // frame=279fps=20q=-1.0Lsize=2701kBtime=11.36bitrate=1948.6kbits/s
+                        Line.Replace(wxT(" "), wxEmptyString, true); // frame=279fps=20q=-1.0Lsize=2701kBtime=11.36bitrate=1948.6kbits/sdup=0...
 
-                        Bitrate = Line.AfterLast('=');
-                        Line = Line.BeforeLast('=').BeforeLast('b');
-                        Time = Line.AfterLast('=');
-                        Line = Line.BeforeLast('t');
-                        Size = Line.AfterLast('=');
-                        Line = Line.BeforeLast('q');
+                        // assume size is between "size=" and "time="
+                        pos_start = Line.find(wxT("size="), pos_end) + 5;
+                        pos_end = Line.find(wxT("time="), pos_start);
+                        Size = Line.Mid(pos_start, pos_end - pos_start);
+                        // assume time is between "time=" and "bitrate="
+                        pos_start = Line.find(wxT("time="), pos_end) + 5;
+                        pos_end = Line.find(wxT("bitrate="), pos_start);
+                        Time = Line.Mid(pos_start, pos_end - pos_start);
+                        // assume bitrate starts after "bitrate=" and ends with "/s"
+                        pos_start = Line.find(wxT("bitrate="), pos_end) + 8;
+                        pos_end = Line.find(wxT("/s"), pos_start) + 2;
+                        Bitrate = Line.Mid(pos_start, pos_end - pos_start);
+
                         // audio || subtitle
                         if(Line.IsEmpty())
                         {
@@ -2592,7 +2648,7 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
     ButtonAddTask->Enable();
     ListCtrlTasks->Enable();
 
-	if(AbortEncoding)
+    if(AbortEncoding)
     {
         wxEndBusyCursor();
     }
@@ -2608,35 +2664,35 @@ void AVConvGUIFrame::OnProcessTerinate(wxProcessEvent& event)
     // TODO: get exit code and print error if necessary
     if(event.GetExitCode() != 0)
     {
-		wxMessageBox(wxString::Format(wxT("External application exit with code: %i"), event.GetExitCode()));
-	}
+        wxMessageBox(wxString::Format(wxT("External application exit with code: %i"), event.GetExitCode()));
+    }
 }
 
 /*
 wxInt32 ffGUIFrame::Verify(VideoIO *videoReader, EncodingJob *encodingJob)
 {
-	//[avi @ 02E620E0] Application provided invalid, non monotonically increasing dts to muxer in stream 1: 312479 >= 0
-	//av_interleaved_write_frame(): Invalid argument
+    //[avi @ 02E620E0] Application provided invalid, non monotonically increasing dts to muxer in stream 1: 312479 >= 0
+    //av_interleaved_write_frame(): Invalid argument
 
-	//[libxvid @ 026FCA60] Invalid pixel aspect ratio 357/355
-	//Video encoding failed
+    //[libxvid @ 026FCA60] Invalid pixel aspect ratio 357/355
+    //Video encoding failed
 
-	//Format:
-	//-------
-	//flv		// requires audio samplerate < 48kHz
-	//mpeg    // no problem
+    //Format:
+    //-------
+    //flv       // requires audio samplerate < 48kHz
+    //mpeg    // no problem
 
-	//ACodec:
-	//-------
-	//aac		// requires -strict experimental
-	//flac    // vlc unsupported
-	//mp2		// vlc unsupported
+    //ACodec:
+    //-------
+    //aac       // requires -strict experimental
+    //flac    // vlc unsupported
+    //mp2       // vlc unsupported
 
-	//VCodec:
-	//-------
-	//mpeg1video	// no problem
-	//mpeg2video
-	//mpeg4		// requires framerate with denominator < 65536 (16 bit)
+    //VCodec:
+    //-------
+    //mpeg1video    // no problem
+    //mpeg2video
+    //mpeg4     // requires framerate with denominator < 65536 (16 bit)
 
     if(encodingJob->FileFormat == wxT("flv"))
     {
@@ -2731,21 +2787,21 @@ bool AVConvGUIFrame::VerifySettings()
     SubtitleSettings* sSettings;
 
     wxArrayString supported_codecs;
-	wxString selected_codec = wxEmptyString;
-	bool codec_supported = false;
+    wxString selected_codec = wxEmptyString;
+    bool codec_supported = false;
 
     for(size_t t=0; t<EncodingTasks.GetCount(); t++)
     {
-		warning_prefix = wxString::Format(wxT("\n# Task=%lu"), (unsigned long)t);
+        warning_prefix = wxString::Format(wxT("\n# Task=%lu"), (unsigned long)t);
 
         for(size_t f=0; f<EncodingTasks[t]->InputFiles.GetCount(); f++)
         {
-			warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu"), (unsigned long)t, (unsigned long)f);
+            warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu"), (unsigned long)t, (unsigned long)f);
 
-			if(EncodingTasks[t]->OutputFile.GetFullPath() == EncodingTasks[t]->InputFiles[f]->File.GetFullPath())
-			{
-				warning.Append(warning_prefix + wxT("\nTarget filename equals source filename!"));
-			}
+            if(EncodingTasks[t]->OutputFile.GetFullPath() == EncodingTasks[t]->InputFiles[f]->File.GetFullPath())
+            {
+                warning.Append(warning_prefix + wxT("\nTarget filename equals source filename!"));
+            }
 
             for(size_t v=0; v<EncodingTasks[t]->InputFiles[f]->VideoStreams.GetCount(); v++)
             {
@@ -2754,29 +2810,29 @@ bool AVConvGUIFrame::VerifySettings()
                     vSettings = &(EncodingTasks[t]->InputFiles[f]->VideoStreams[v]->EncodingSettings);
                     warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu, Stream=%lu"), (unsigned long)t, (unsigned long)f, (unsigned long)v);
 
-					supported_codecs = Libav::FormatVideoCodecs(EncodingTasks[t]->OutputFormat);
-					selected_codec = FormatFromSetting(vSettings->Codec.BeforeFirst(' '), wxT("default"));
-					codec_supported = false;
+                    supported_codecs = Libav::FormatVideoCodecs(EncodingTasks[t]->OutputFormat);
+                    selected_codec = FormatFromSetting(vSettings->Codec.BeforeFirst(' '), wxT("default"));
+                    codec_supported = false;
                     for(size_t c=0; c<supported_codecs.Count(); c++)
                     {
-						if(supported_codecs[c].IsSameAs(selected_codec))
-						{
-							codec_supported = true;
-							break;
-						}
-					}
-					if(!codec_supported)
-					{
-						warning.Append(warning_prefix + wxT("\nContainer format does not support the selected video codec!"));
-					}
+                        if(supported_codecs[c].IsSameAs(selected_codec))
+                        {
+                            codec_supported = true;
+                            break;
+                        }
+                    }
+                    if(!codec_supported)
+                    {
+                        warning.Append(warning_prefix + wxT("\nContainer format does not support the selected video codec!"));
+                    }
                     
                     if(vSettings->Bitrate.StartsWith(wxT("-crf")))
                     {
-						if(!vSettings->Codec.BeforeFirst(' ').IsSameAs(wxT("libx264")))
-						{
-							warning.Append(warning_prefix + wxT("\nConstant quality (-crf) not supported by the selected video codec!"));
-						}
-					}
+                        if(!vSettings->Codec.BeforeFirst(' ').IsSameAs(wxT("libx264")))
+                        {
+                            warning.Append(warning_prefix + wxT("\nConstant quality (-crf) not supported by the selected video codec!"));
+                        }
+                    }
 
                     vSettings = NULL;
                 }
@@ -2791,53 +2847,53 @@ bool AVConvGUIFrame::VerifySettings()
                     
                     supported_codecs = Libav::FormatAudioCodecs(EncodingTasks[t]->OutputFormat);
                     selected_codec = FormatFromSetting(aSettings->Codec.BeforeFirst(' '), wxT("default"));
-					codec_supported = false;
+                    codec_supported = false;
                     for(size_t c=0; c<supported_codecs.Count(); c++)
                     {
-						if(supported_codecs[c].IsSameAs(selected_codec))
-						{
-							codec_supported = true;
-							break;
-						}
-					}
-					if(!codec_supported)
-					{
-						warning.Append(warning_prefix + wxT("\nContainer format does not support the selected audio codec!"));
-					}
+                        if(supported_codecs[c].IsSameAs(selected_codec))
+                        {
+                            codec_supported = true;
+                            break;
+                        }
+                    }
+                    if(!codec_supported)
+                    {
+                        warning.Append(warning_prefix + wxT("\nContainer format does not support the selected audio codec!"));
+                    }
 
                     /*
                     if(EncodingTasks[t]->OutputFormat.IsSameAs(wxT("flv")))
                     {
-						// convert frequency to number
-						int frequency = 0;
-						if(aSettings->Frequency.EndsWith(wxT("k")))
-						{
-							if(aSettings->Frequency.Find(wxT(".")))
-							{
-								// 44.1k -> 44100
-								// 22.05k -> 22050
-								//frequency = 1000 * wxAtoi(aSettings->Frequency.BeforeLast('.'));// + (wxAtoi(aSettings->Frequency.AfterLast('.').BeforeLast('k'));
-							}
-							else
-							{
-								// 48k -> 48000
-								//frequency = 1000 * wxAtoi(audioFrequency);
-								frequency = 1000 * wxAtoi(aSettings->Frequency.BeforeLast('k'));
-							}
-						}
-						else
-						{
-							// 48000 -> 48000
-							// 48000.5 -> 48000
-							frequency = wxAtoi(aSettings->Frequency);
-						}
+                        // convert frequency to number
+                        int frequency = 0;
+                        if(aSettings->Frequency.EndsWith(wxT("k")))
+                        {
+                            if(aSettings->Frequency.Find(wxT(".")))
+                            {
+                                // 44.1k -> 44100
+                                // 22.05k -> 22050
+                                //frequency = 1000 * wxAtoi(aSettings->Frequency.BeforeLast('.'));// + (wxAtoi(aSettings->Frequency.AfterLast('.').BeforeLast('k'));
+                            }
+                            else
+                            {
+                                // 48k -> 48000
+                                //frequency = 1000 * wxAtoi(audioFrequency);
+                                frequency = 1000 * wxAtoi(aSettings->Frequency.BeforeLast('k'));
+                            }
+                        }
+                        else
+                        {
+                            // 48000 -> 48000
+                            // 48000.5 -> 48000
+                            frequency = wxAtoi(aSettings->Frequency);
+                        }
 
-						if(frequency < 1 || frequency > 44100)
-						{
-							warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: audio frequency not supported in flv (max. 44100)!"), (unsigned long)t, (unsigned long)f, (unsigned long)a));
-						}
-					}
-					*/
+                        if(frequency < 1 || frequency > 44100)
+                        {
+                            warning.Append(wxString::Format(wxT("\nTask %lu[%lu:%lu]: audio frequency not supported in flv (max. 44100)!"), (unsigned long)t, (unsigned long)f, (unsigned long)a));
+                        }
+                    }
+                    */
 
                     aSettings = NULL;
                 }
@@ -2850,21 +2906,21 @@ bool AVConvGUIFrame::VerifySettings()
                     sSettings = &(EncodingTasks[t]->InputFiles[f]->SubtitleStreams[s]->EncodingSettings);
                     warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu, Stream=%lu"), (unsigned long)t, (unsigned long)f, (unsigned long)s);
                     
-					supported_codecs = Libav::FormatSubtitleCodecs(EncodingTasks[t]->OutputFormat);
-					selected_codec = FormatFromSetting(sSettings->Codec.BeforeFirst(' '), wxT("default"));
-					codec_supported = false;
+                    supported_codecs = Libav::FormatSubtitleCodecs(EncodingTasks[t]->OutputFormat);
+                    selected_codec = FormatFromSetting(sSettings->Codec.BeforeFirst(' '), wxT("default"));
+                    codec_supported = false;
                     for(size_t c=0; c<supported_codecs.Count(); c++)
                     {
-						if(supported_codecs[c].IsSameAs(selected_codec))
-						{
-							codec_supported = true;
-							break;
-						}
-					}
-					if(!codec_supported)
-					{
-						warning.Append(warning_prefix + wxT("\nContainer format does not support the selected subtitle codec!"));
-					}
+                        if(supported_codecs[c].IsSameAs(selected_codec))
+                        {
+                            codec_supported = true;
+                            break;
+                        }
+                    }
+                    if(!codec_supported)
+                    {
+                        warning.Append(warning_prefix + wxT("\nContainer format does not support the selected subtitle codec!"));
+                    }
 
                     sSettings = NULL;
                 }
