@@ -1420,7 +1420,7 @@ void AVConvGUIFrame::OnListCtrlTasksItemSelect(wxListEvent& event)
                     }
                     else
                     {
-                        CheckListBoxAudioStreams->Delete(i);
+                        CheckListBoxSubtitleStreams->Delete(i);
                     }
                 }
             //}
@@ -2622,6 +2622,19 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                     wxProcess::Kill(TaskPID, wxSIGKILL);
                     #endif
                     LogFile.AddLine(wxT("ABORTED BY USER"));
+
+                    // terminating through sending SIGTERM may take a while
+                    // wait until process is finished, before going to wxDELETE(process)
+
+                    while(wxProcess::Exists(TaskPID))
+                    {
+                        //wxMessageBox(_("Process still exists!!!"));
+                        printf("waiting for termination...\n");
+                        wxMilliSleep(250);
+                        wxYield();
+                    }
+                    printf("terminated\n");
+
                     // break to prevent kill called again...
                     break;
                 }
@@ -2678,7 +2691,7 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                 /*
                 if(TaskProcess->IsInputAvailable())
                 {
-                    // read stack feom std stream
+                    // read stack from std stream
                     LogFile.AddLine(stdtis->ReadLine());
                 }
                 */

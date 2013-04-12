@@ -93,6 +93,7 @@ class AVConvGUIFrame: public wxFrame
         void OnCheckListBoxSubtitleStreamsSelect(wxCommandEvent& event);
         void OnButtonScriptClick(wxCommandEvent& event);
         //*)
+        void OnProcessTerinate(wxProcessEvent& event);
         void OnMainWindowRClick(wxMouseEvent& event);
         void OnMenuPresetsClick(wxCommandEvent& event);
 
@@ -262,8 +263,6 @@ private: void ShowSelectedIndices();
         private: void RenderFrame();
         // test if the settings are consistent
         private: bool VerifySettings();
-        //
-        void OnProcessTerinate(wxProcessEvent& event);
 
         DECLARE_EVENT_TABLE()
 };

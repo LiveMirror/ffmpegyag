@@ -23,13 +23,9 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=5
-FILE_NAME_0=480;C;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.h;0;4
-FILE_NAME_1=117258;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.cpp;0;4
-FILE_NAME_2=57;C;0;16;1;1;0;.%2Fsrc%2FLibav.h;0;4
-FILE_NAME_3=1051;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FLibav.cpp;0;4
-FILE_NAME_4=188;C;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvSettings.h;0;4
-FILE_NAME_5=608;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvSettings.cpp;0;4
+current_page=0
+FILE_NAME_0=8473;C;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.h;0;4
+FILE_NAME_1=118994;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.cpp;0;4
 
 [VTE]
 last_dir=/home/ronny/Documents/development/ffmpegyag
