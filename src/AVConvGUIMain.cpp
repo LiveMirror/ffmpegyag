@@ -2606,22 +2606,32 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                 if(AbortEncoding)
                 {
                     wxBeginBusyCursor();
+                    wxProgressDialog* ProgressDialog = new wxProgressDialog(wxT("Terminating Process"), wxT("Terminating process may take a while..."));
 
                     // ffmpeg uses 'q' keypress
                     if(Libav::ConverterApplication.GetName().StartsWith(wxT("ffmpeg")))
                     {
+                        // NOTE: PutChar('q') is working on windows but wxProcess::Exists() can't be used
+                        // so we need to terminate process as fast as possible to kill it before pretending loop finish
+                        #ifdef __LINUX__
                         stdtos->PutChar('q');
+                        #endif
+                        #ifdef __WINDOWS__
+                        //stdtos->PutChar('q');
+                        wxProcess::Kill(TaskPID, wxSIGKILL);
+                        #endif
                     }
                     // avconv uses signal handling to exit (ctrl+c / SIGINT)
                     else if(Libav::ConverterApplication.GetName().StartsWith(wxT("avconv")))
                     {
-                        // TODO: check if SIGTERM is working on windows...
-                        //#ifdef __LINUX__
+                        // NOTE: The only way to terminate a wxProcess in windows seems to be SIGKILL
+                        // on SIGINT the application freezes and the process keep running
+                        #ifdef __LINUX__
                         wxProcess::Kill(TaskPID, wxSIGINT);
-                        //#endif
-                        //#ifdef __WINDOWS__
-                        //wxProcess::Kill(TaskPID, wxSIGKILL);
-                        //#endif
+                        #endif
+                        #ifdef __WINDOWS__
+                        wxProcess::Kill(TaskPID, wxSIGKILL);
+                        #endif
                     }
                     // unknown application: force kill
                     else
@@ -2629,10 +2639,16 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                         wxProcess::Kill(TaskPID, wxSIGKILL);
                     }
 
-                    // terminating through sending SIGTERM may take a while
                     // wait until process is finished, before going to wxDELETE(process)
-                    wxProgressDialog* ProgressDialog = new wxProgressDialog(wxT("Terminating Process"), wxT("Terminating process may take a while..."));
+                    // wxProcess::Exists() reutrns true on windows
+                    // -> http://forums.wxwidgets.org/viewtopic.php?t=24855&p=106240
+                    // so we use a fake loop in windows to pretend some activity...
+                    #ifdef __LINUX__
                     while(wxProcess::Exists(TaskPID))
+                    #endif
+                    #ifdef __WINDOWS__
+                    for(int i=0; i<30; i++)
+                    #endif
                     {
                         ProgressDialog->Pulse();
                         wxMilliSleep(50);
@@ -2641,6 +2657,7 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                         // OnProcessTemrinate() will never be executed
                         wxYield();
                     }
+
                     ProgressDialog->Close();
                     wxDELETE(ProgressDialog);
 
@@ -2758,12 +2775,25 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
 
 void AVConvGUIFrame::OnButtonAbortClick(wxCommandEvent& event)
 {
+    wxMessageBox(wxString::Format(wxT("Set AbortEncoding=true (&%i)"), &AbortEncoding));
     AbortEncoding = true;
 }
 
 void AVConvGUIFrame::OnProcessTerinate(wxProcessEvent& event)
 {
+    if(this->AbortEncoding)
+    {
+        wxMessageBox(wxString::Format(wxT("Get AbortEncoding=true (&%i)"), &AbortEncoding));
+    }
+    else
+    {
+        wxMessageBox(wxString::Format(wxT("Get AbortEncoding=false (&%i)"), &AbortEncoding));
+    }
+
     // FIXME: AbortEncoding is randomly false or true...
+    // the resolved memory address is different from the memory address
+    // of the global variable AVConvGUIFrame::AbortEncode...
+    // probably connecting of event is done wrong, so global vars can't be resolved
     if(!AbortEncoding && (event.GetExitCode() != 0))
     {
         wxMessageBox(wxString::Format(wxT("External application exit with code: %i"), event.GetExitCode()));
