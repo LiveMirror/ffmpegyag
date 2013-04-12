@@ -2593,7 +2593,7 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
 
             TaskProcess = new wxProcess();
             // overwriting terminate event prevents from crashing when using wxDELETE(wxProcess)
-            TaskProcess->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(AVConvGUIFrame::OnProcessTerinate));
+            TaskProcess->Connect(wxEVT_END_PROCESS, (wxObjectEventFunction)&AVConvGUIFrame::OnProcessTerinate, NULL, this);
             TaskProcess->Redirect();
             TaskPID = wxExecute(TaskCommands[c], wxEXEC_ASYNC, TaskProcess);
 
@@ -2775,25 +2775,11 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
 
 void AVConvGUIFrame::OnButtonAbortClick(wxCommandEvent& event)
 {
-    wxMessageBox(wxString::Format(wxT("Set AbortEncoding=true (&%i)"), &AbortEncoding));
     AbortEncoding = true;
 }
 
 void AVConvGUIFrame::OnProcessTerinate(wxProcessEvent& event)
 {
-    if(this->AbortEncoding)
-    {
-        wxMessageBox(wxString::Format(wxT("Get AbortEncoding=true (&%i)"), &AbortEncoding));
-    }
-    else
-    {
-        wxMessageBox(wxString::Format(wxT("Get AbortEncoding=false (&%i)"), &AbortEncoding));
-    }
-
-    // FIXME: AbortEncoding is randomly false or true...
-    // the resolved memory address is different from the memory address
-    // of the global variable AVConvGUIFrame::AbortEncode...
-    // probably connecting of event is done wrong, so global vars can't be resolved
     if(!AbortEncoding && (event.GetExitCode() != 0))
     {
         wxMessageBox(wxString::Format(wxT("External application exit with code: %i"), event.GetExitCode()));
