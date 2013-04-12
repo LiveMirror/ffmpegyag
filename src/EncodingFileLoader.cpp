@@ -174,7 +174,7 @@ EncodingFileLoader::EncodingFileLoader(wxFileName InputFile)
                         {
                             vStream->Duration = (int64_t)1000 * stream->duration * (int64_t)stream->time_base.num / (int64_t)stream->time_base.den;
                         }
-                        else 
+                        else
                         {
                             // use format duration
                             vStream->Duration = (int64_t)1000 * pFormatCtx->duration / AV_TIME_BASE;
@@ -422,6 +422,10 @@ EncodingFileLoader::~EncodingFileLoader()
     // close the video file
     if(pFormatCtx != NULL)
     {
+        for(unsigned int i=0; i<pFormatCtx->nb_streams; i++)
+        {
+            avcodec_close(pFormatCtx->streams[i]->codec);
+        }
         avformat_close_input(&pFormatCtx);
         pFormatCtx = NULL;
     }

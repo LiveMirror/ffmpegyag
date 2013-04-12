@@ -74,7 +74,7 @@ VideoFrame::~VideoFrame()
 
 GLint VideoFrame::GetGLFormat()
 {
-	// TODO: add more formats
+    // TODO: add more formats
     switch(AVFormat)
     {
         case PIX_FMT_RGB24: return GL_RGB;

@@ -116,6 +116,6 @@ VideoFrame* VideoFrameGOP::GetVideoFrame(int64_t Timestamp)
         }
     }
 
-	// no corresponding frame found in gop...
-	return NULL;
+    // no corresponding frame found in gop...
+    return NULL;
 }

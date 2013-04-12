@@ -26,13 +26,13 @@ class MediaStream
 
     public: unsigned int ID;
     public: bool Enabled; // set to true if this stream should be included into the output file
-	public: int64_t Size; // byte
-	public: int64_t StartTime; // milli seconds
-	public: int64_t Duration; // milli seconds
-	public: int Bitrate; // bit/sec
-	public: wxString Title;
-	public: wxString Language;
-	public: wxString CodecName; // short name of codec
+    public: int64_t Size; // byte
+    public: int64_t StartTime; // milli seconds
+    public: int64_t Duration; // milli seconds
+    public: int Bitrate; // bit/sec
+    public: wxString Title;
+    public: wxString Language;
+    public: wxString CodecName; // short name of codec
 };
 
 class VideoStream : public MediaStream
@@ -40,12 +40,12 @@ class VideoStream : public MediaStream
     public: VideoStream(unsigned int StreamID, bool EnableStream);
     public: virtual ~VideoStream();
 
-	public: int FrameCount; // acronym for IndexEntryCount, points to the same data
-	public: IndexEntryArray IndexEntries; // acronym for IndexEntries, points to the same data
-	public: double FrameRate;
-	public: int Width;
-	public: int Height;
-	public: wxString Profile; // BitDepth, PixelFormat(YUV, RGB,...), Level
+    public: int FrameCount; // acronym for IndexEntryCount, points to the same data
+    public: IndexEntryArray IndexEntries; // acronym for IndexEntries, points to the same data
+    public: double FrameRate;
+    public: int Width;
+    public: int Height;
+    public: wxString Profile; // BitDepth, PixelFormat(YUV, RGB,...), Level
     public: VideoSettings EncodingSettings;
 };
 
@@ -57,7 +57,7 @@ class AudioStream : public MediaStream
     public: virtual ~AudioStream();
 
     public: int SampleRate;
-	public: int ChannelCount;
+    public: int ChannelCount;
     public: AudioSettings EncodingSettings;
 };
 
