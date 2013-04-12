@@ -2563,8 +2563,6 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
     ButtonEncode->Disable();
     ButtonAbort->Enable();
 
-    wxYield();
-
     AbortEncoding = false;
     wxArrayString TaskCommands;
     // minor security check
@@ -2609,6 +2607,7 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                 {
                     wxBeginBusyCursor();
 
+                    // TODO: send keypress 'q' for termination
                     #ifdef __LINUX__
                     // ffmpeg uses 'q' keypress
                     //
@@ -2621,21 +2620,23 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                     // on windows ctrl+c signal is not working correctly, force kill
                     wxProcess::Kill(TaskPID, wxSIGKILL);
                     #endif
-                    LogFile.AddLine(wxT("ABORTED BY USER"));
 
                     // terminating through sending SIGTERM may take a while
                     // wait until process is finished, before going to wxDELETE(process)
-
+                    wxProgressDialog* ProgressDialog = new wxProgressDialog(wxT("Terminating Process"), wxT("Terminating process may take a while..."));
                     while(wxProcess::Exists(TaskPID))
                     {
-                        //wxMessageBox(_("Process still exists!!!"));
-                        printf("waiting for termination...\n");
-                        wxMilliSleep(250);
+                        ProgressDialog->Pulse();
+                        wxMilliSleep(50);
+                        // use yield to process the message queue
+                        // otherwise process might stuck because
+                        // OnProcessTemrinate() will never be executed
                         wxYield();
                     }
-                    printf("terminated\n");
+                    ProgressDialog->Close();
+                    wxDELETE(ProgressDialog);
 
-                    // break to prevent kill called again...
+                    // break out of the process loop (while)
                     break;
                 }
 
@@ -2705,13 +2706,27 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
             //wxDELETE(stdtos);
 
             wxDELETE(TaskProcess);
+
+            if(AbortEncoding)
+            {
+                LogFile.AddLine(wxT("ABORTED BY USER"));
+                // break out of the task.commands loop (for)
+                break;
+            }
+        }
+
+        LogFile.Write();
+        LogFile.Close();
+
+        if(AbortEncoding)
+        {
+            wxEndBusyCursor();
+            // break out of the tasks loop (for)
+            break;
         }
 
         // highlight task as completed in green
         ListCtrlTasks->SetItemTextColour(t, wxColour(0, 200, 0));
-
-        LogFile.Write();
-        LogFile.Close();
     }
 
     // reset colours of tasks
@@ -2731,11 +2746,6 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
     ButtonRemoveTask->Enable();
     ButtonAddTask->Enable();
     ListCtrlTasks->Enable();
-
-    if(AbortEncoding)
-    {
-        wxEndBusyCursor();
-    }
 }
 
 void AVConvGUIFrame::OnButtonAbortClick(wxCommandEvent& event)
@@ -2745,8 +2755,8 @@ void AVConvGUIFrame::OnButtonAbortClick(wxCommandEvent& event)
 
 void AVConvGUIFrame::OnProcessTerinate(wxProcessEvent& event)
 {
-    // TODO: get exit code and print error if necessary
-    if(event.GetExitCode() != 0)
+    // FIXME: AbortEncoding is randomly false or true...
+    if(!AbortEncoding && (event.GetExitCode() != 0))
     {
         wxMessageBox(wxString::Format(wxT("External application exit with code: %i"), event.GetExitCode()));
     }
