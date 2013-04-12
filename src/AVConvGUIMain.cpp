@@ -330,7 +330,7 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     StaticText7->Disable();
     FlexGridSizerVideo->Add(StaticText7, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     ComboBoxVideoCodec = new wxComboBox(this, ID_COMBOBOX4, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX4"));
-    ComboBoxVideoCodec->SetToolTip(_("Set the codec for the selected video stream(s).\nTIP: This parameter is directly passed to ffmpeg, so you can append commandline options\n(i.e. 'libx264 -preset:v slow -tune:v animation')."));
+    ComboBoxVideoCodec->SetToolTip(_("Set the codec for the selected video stream(s).\nTIP: This parameter is directly passed to ffmpeg, so you can append commandline options\n(i.e. 'libx264 -preset:v slower -tune:v animation')."));
     FlexGridSizerVideo->Add(ComboBoxVideoCodec, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     StaticText13 = new wxStaticText(this, ID_STATICTEXT14, _("Bitrate:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT14"));
     StaticText13->Disable();
@@ -1035,7 +1035,7 @@ void AVConvGUIFrame::OnButtonAddTaskClick(wxCommandEvent& event)
                     EncTask->InputFiles.Add(InputFile);
                     EncodingTasks.Add(EncTask);
                     EncTask = NULL;
-                    
+
                     if(!HadSelectedTasks)
                     {
                         ListCtrlTasks->SetItemState(InsertIndex, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
@@ -1468,7 +1468,7 @@ void AVConvGUIFrame::RenderFrame()
 
             // BOTTLENECK
             VideoFrame* Texture = efl->GetVideoFrameData(SelectedStream, SelectedFrame, 512, 256); // width & height of texture must be of power 2
-            
+
             if(Texture != NULL)
             {
                 // BOTTLENECK
@@ -2400,19 +2400,85 @@ void AVConvGUIFrame::OnComboBoxSubtitleCodecSelect(wxCommandEvent& event)
 
 void AVConvGUIFrame::OnMenuPresetsClick(wxCommandEvent& event)
 {
-    // TODO: get menu entry and load presetvalues into controls
-    //event.GetId();
-    wxMessageBox(wxT("Preset"));
+    wxArrayString PresetSettings = AVConvSettings::LoadPreset(MenuPresets->GetLabel(event.GetId()));
+
+    wxCommandEvent ce;
+
+    wxString Value;
+    for(size_t i=0; i<PresetSettings.GetCount(); i++)
+    {
+        if(PresetSettings[i].StartsWith(wxT("file_format="), &Value))
+        {
+            ComboBoxFileFormat->SetValue(Value);
+            OnComboBoxFileFormatSelect(ce);
+        }
+        if(PresetSettings[i].StartsWith(wxT("video_codec="), &Value))
+        {
+            ComboBoxVideoCodec->SetValue(Value);
+            OnComboBoxVideoCodecSelect(ce);
+        }
+        if(PresetSettings[i].StartsWith(wxT("video_bitrate="), &Value))
+        {
+            ComboBoxVideoBitrate->SetValue(Value);
+            OnComboBoxVideoBitrateSelect(ce);
+        }
+        if(PresetSettings[i].StartsWith(wxT("video_framesize="), &Value))
+        {
+            ComboBoxVideoFrameSize->SetValue(Value);
+            OnComboBoxVideoFrameSizeSelect(ce);
+        }
+        if(PresetSettings[i].StartsWith(wxT("video_aspectratio="), &Value))
+        {
+            ComboBoxVideoAspectRatio->SetValue(Value);
+            OnComboBoxVideoAspectRatioSelect(ce);
+        }
+        if(PresetSettings[i].StartsWith(wxT("audio_codec="), &Value))
+        {
+            ComboBoxAudioCodec->SetValue(Value);
+            OnComboBoxAudioCodecSelect(ce);
+        }
+        if(PresetSettings[i].StartsWith(wxT("audio_bitrate="), &Value))
+        {
+            ComboBoxAudioBitrate->SetValue(Value);
+            OnComboBoxAudioBitrateSelect(ce);
+        }
+        if(PresetSettings[i].StartsWith(wxT("audio_frequency="), &Value))
+        {
+            ComboBoxAudioFrequency->SetValue(Value);
+            OnComboBoxAudioFrequencySelect(ce);
+        }
+        if(PresetSettings[i].StartsWith(wxT("audio_channels="), &Value))
+        {
+            ComboBoxAudioChannels->SetValue(Value);
+            OnComboBoxAudioChannelsSelect(ce);
+        }
+        if(PresetSettings[i].StartsWith(wxT("subtitle_codec="), &Value))
+        {
+            ComboBoxSubtitleCodec->SetValue(Value);
+            OnComboBoxSubtitleCodecSelect(ce);
+        }
+    }
 }
 
 void AVConvGUIFrame::OnMainWindowRClick(wxMouseEvent& event)
 {
-    // TODO: generate menu entries
-    MenuPresets->Append(0,_("Test ID0"));
-    //MenuPresets->AppendSeparator();
-    MenuPresets->Append(1,_("Test ID1"));
+    size_t count = 2;
+    if(MenuPresets->GetTitle().IsEmpty())
+    {
+        count = 0;
+    }
+    int id=0;
+    while(MenuPresets->GetMenuItemCount() > count)
+    {
+        MenuPresets->Delete(id);
+        id++;
+    }
+    wxArrayString Presets = AVConvSettings::GetPresets();
+    for(size_t i=0; i<Presets.GetCount(); i++)
+    {
+        MenuPresets->Append(i, Presets[i]);
+    }
     this->PopupMenu(MenuPresets, event.GetPosition());
-    //wxMessageBox(wxT("PopupMenu"));
 }
 
 void AVConvGUIFrame::OnButtonScriptClick(wxCommandEvent& event)
@@ -2590,13 +2656,13 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                         else
                         {
                             // assume frame is between "frame=" and "fps="
-							pos_start = Line.find(wxT("frame="), 0) + 6;
-							pos_end = Line.find(wxT("fps="), pos_start);
-							Frame = Line.Mid(pos_start, pos_end - pos_start);
-							// assume framerate is between "fps=" and "q="
-							pos_start = Line.find(wxT("fps="), 0) + 4;
-							pos_end = Line.find(wxT("q="), pos_start);
-							Framerate = Line.Mid(pos_start, pos_end - pos_start);
+                            pos_start = Line.find(wxT("frame="), 0) + 6;
+                            pos_end = Line.find(wxT("fps="), pos_start);
+                            Frame = Line.Mid(pos_start, pos_end - pos_start);
+                            // assume framerate is between "fps=" and "q="
+                            pos_start = Line.find(wxT("fps="), 0) + 4;
+                            pos_end = Line.find(wxT("q="), pos_start);
+                            Framerate = Line.Mid(pos_start, pos_end - pos_start);
 
                             StatusBar->SetStatusText(wxT("Frame: ") + Frame + wxT(", Time: ") + Time + wxT(", Size: ") + Size + wxT(", ") + Framerate + wxT("fps, ") + Bitrate, 1);
                         }
@@ -2830,7 +2896,7 @@ bool AVConvGUIFrame::VerifySettings()
                     {
                         warning.Append(warning_prefix + wxT("\nContainer format does not support the selected video codec!"));
                     }
-                    
+
                     if(vSettings->Bitrate.StartsWith(wxT("-crf")))
                     {
                         if(!vSettings->Codec.BeforeFirst(' ').IsSameAs(wxT("libx264")))
@@ -2849,7 +2915,7 @@ bool AVConvGUIFrame::VerifySettings()
                 {
                     aSettings = &(EncodingTasks[t]->InputFiles[f]->AudioStreams[a]->EncodingSettings);
                     warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu, Stream=%lu"), (unsigned long)t, (unsigned long)f, (unsigned long)a);
-                    
+
                     supported_codecs = Libav::FormatAudioCodecs(EncodingTasks[t]->OutputFormat);
                     selected_codec = FormatFromSetting(aSettings->Codec.BeforeFirst(' '), wxT("default"));
                     codec_supported = false;
@@ -2910,7 +2976,7 @@ bool AVConvGUIFrame::VerifySettings()
                 {
                     sSettings = &(EncodingTasks[t]->InputFiles[f]->SubtitleStreams[s]->EncodingSettings);
                     warning_prefix = wxString::Format(wxT("\n# Task=%lu, File=%lu, Stream=%lu"), (unsigned long)t, (unsigned long)f, (unsigned long)s);
-                    
+
                     supported_codecs = Libav::FormatSubtitleCodecs(EncodingTasks[t]->OutputFormat);
                     selected_codec = FormatFromSetting(sSettings->Codec.BeforeFirst(' '), wxT("default"));
                     codec_supported = false;

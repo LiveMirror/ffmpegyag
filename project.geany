@@ -1,12 +1,12 @@
 [file_prefs]
 final_new_line=true
-ensure_convert_new_lines=false
-strip_trailing_spaces=false
-replace_tabs=false
+ensure_convert_new_lines=true
+strip_trailing_spaces=true
+replace_tabs=true
 
 [indentation]
 indent_width=4
-indent_type=1
+indent_type=0
 indent_hard_tab_width=8
 detect_indent=false
 detect_indent_width=false
@@ -23,16 +23,13 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=2
-FILE_NAME_0=85894;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.cpp;0;4
-FILE_NAME_1=60;C;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingFileLoader.h;0;4
-FILE_NAME_2=31785;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingFileLoader.cpp;0;4
-FILE_NAME_3=3049;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingTask.cpp;0;4
-FILE_NAME_4=475;C;0;16;1;1;0;.%2Fsrc%2FAVConvSettings.h;0;4
-FILE_NAME_5=0;C++;0;16;1;1;0;.%2Fsrc%2FAVConvSettings.cpp;0;4
-FILE_NAME_6=148;Sh;0;16;1;1;0;%2Fhome%2Fronny%2FDesktop%2Favformat_find_stream_info%2Fbuild-run.sh;0;4
-FILE_NAME_7=3071;C;0;16;1;1;0;%2Fhome%2Fronny%2FDesktop%2Favformat_find_stream_info%2Fmain.c;0;4
-FILE_NAME_8=2265;C;0;16;1;1;0;%2Fhome%2Fronny%2FDesktop%2Favformat_find_stream_info%2Fmain_working.c;0;4
+current_page=5
+FILE_NAME_0=480;C;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.h;0;4
+FILE_NAME_1=117258;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.cpp;0;4
+FILE_NAME_2=57;C;0;16;1;1;0;.%2Fsrc%2FLibav.h;0;4
+FILE_NAME_3=1051;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FLibav.cpp;0;4
+FILE_NAME_4=188;C;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvSettings.h;0;4
+FILE_NAME_5=608;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvSettings.cpp;0;4
 
 [VTE]
 last_dir=/home/ronny/Documents/development/ffmpegyag
