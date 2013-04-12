@@ -2541,7 +2541,7 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
     wxProcess* TaskProcess;
     wxTextInputStream* errtis;
     //wxTextInputStream* stdtis;
-    //wxTextOutputStream* stdtos;
+    wxTextOutputStream* stdtos;
     wxTextFile LogFile;
     long StartTime = wxGetLocalTime();
 
@@ -2599,7 +2599,7 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
 
             errtis = new wxTextInputStream(*(TaskProcess->GetErrorStream()));
             //stdtis = new wxTextInputStream(*(TaskProcess->GetInputStream()));
-            //stdtos = new wxTextOutputStream(*(TaskProcess->GetOutputStream()));
+            stdtos = new wxTextOutputStream(*(TaskProcess->GetOutputStream()));
 
             while(wxProcess::Exists(TaskPID))
             {
@@ -2607,19 +2607,27 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                 {
                     wxBeginBusyCursor();
 
-                    // TODO: send keypress 'q' for termination
-                    #ifdef __LINUX__
                     // ffmpeg uses 'q' keypress
-                    //
+                    if(Libav::ConverterApplication.GetName().StartsWith(wxT("ffmpeg")))
+                    {
+                        stdtos->PutChar('q');
+                    }
                     // avconv uses signal handling to exit (ctrl+c / SIGINT)
-                    wxProcess::Kill(TaskPID, wxSIGINT);
-                    #endif
-                    #ifdef __WINDOWS__
-                    // ffmpeg uses 'q' keypress
-                    //
-                    // on windows ctrl+c signal is not working correctly, force kill
-                    wxProcess::Kill(TaskPID, wxSIGKILL);
-                    #endif
+                    else if(Libav::ConverterApplication.GetName().StartsWith(wxT("avconv")))
+                    {
+                        // TODO: check if SIGTERM is working on windows...
+                        //#ifdef __LINUX__
+                        wxProcess::Kill(TaskPID, wxSIGINT);
+                        //#endif
+                        //#ifdef __WINDOWS__
+                        //wxProcess::Kill(TaskPID, wxSIGKILL);
+                        //#endif
+                    }
+                    // unknown application: force kill
+                    else
+                    {
+                        wxProcess::Kill(TaskPID, wxSIGKILL);
+                    }
 
                     // terminating through sending SIGTERM may take a while
                     // wait until process is finished, before going to wxDELETE(process)
@@ -2703,7 +2711,7 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
 
             wxDELETE(errtis);
             //wxDELETE(stdtis);
-            //wxDELETE(stdtos);
+            wxDELETE(stdtos);
 
             wxDELETE(TaskProcess);
 
