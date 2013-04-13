@@ -23,34 +23,31 @@ class FileSegment
     //public: wxString TimecodeTo;
     //public: wxString TimecodeFrom;
     //public: wxString TimecodeDuration;
+    public: EncodingFileLoaderArray InputFiles;
+    public: wxFileName OutputFile;
+    public: wxString OutputFormat;
+    public: bool TwoPass;
+    public: bool RemoveMetadata;
+    public: bool RemoveChapters;
+    public: wxArrayString GetCommands();
+    private: wxString GetCommand(Pass PassNumber = NoPass);
 };
 
 WX_DEFINE_ARRAY(FileSegment*, FileSegmentArray);
 
-// TODO: refactoring of structure
-// OutputFormat, InputSegments, TwoPass, RemoveMetadata, RemoveChapters
-// should moved into OutputSegment Structure so it could accessed by
-// EncodingTask->OutputSegments[SegmentIndex]->InputFiles[InputFileIndex]->VideoStreams[VideoStreamIndex].EncodingSettings
-//
 class EncodingTask
 {
     public: EncodingTask();
     public: virtual ~EncodingTask();
 
-    public: EncodingFileLoaderArray InputFiles;
-    public: wxFileName OutputFile;
-    public: wxString OutputFormat;
-    public: FileSegmentArray OutputSegments;
+    // all output segments encoded by this task
+    public: FileSegmentArray OutputFileSegments;
     // if task contains more han one segment, set this option true to concat the segments into a single file
     public: bool OutputSegmentsConcat;
-    public: bool TwoPass;
-    public: bool RemoveMetadata;
-    public: bool RemoveChapters;
-
+    // base output filename for all segments (segment filenames will be generated in GetCommands())
+    public: wxFileName BaseOutputFile;
     // return the commands for this encoding task (number depending on segments & multipass count)
     public: wxArrayString GetCommands();
-    // return the command for use with avconv
-    private: wxString GetCommandAVConv(wxString OutputFileName, wxString StartTime, wxString Duration, Pass PassNumber = NoPass);
 };
 
 WX_DEFINE_ARRAY(EncodingTask*, EncodingTaskArray);

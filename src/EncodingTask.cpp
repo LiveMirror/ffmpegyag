@@ -9,107 +9,54 @@ FileSegment::FileSegment(int64_t StartTime, int64_t EndTime)
     //TimecodeTo = wxEmptyString;
     //TimecodeFrom = wxEmptyString;
     //TimecodeDuration = wxEmptyString;
-}
-
-FileSegment::~FileSegment()
-{
-    //
-}
-
-EncodingTask::EncodingTask()
-{
-    OutputSegmentsConcat = false;
     TwoPass = false;
     RemoveMetadata = true;
     RemoveChapters = true;
 }
 
-EncodingTask::~EncodingTask()
+FileSegment::~FileSegment()
 {
     WX_CLEAR_ARRAY(InputFiles);
-    WX_CLEAR_ARRAY(OutputSegments);
 }
 
-wxArrayString EncodingTask::GetCommands()
+wxArrayString FileSegment::GetCommands()
 {
     wxArrayString Commands;
-
-    if(OutputFile.Mkdir(0755, wxPATH_MKDIR_FULL))
+    if(TwoPass)
     {
-        wxString SegmentFile;
-        wxString SegmentStart;
-        wxString SegmentDuration;
-
-        size_t SegmentCount = OutputSegments.GetCount();
-
-        for(size_t i=0; i<wxMax(1, SegmentCount); i++)
-        {
-            SegmentFile = OutputFile.GetPathWithSep() + OutputFile.GetName();
-            if(SegmentCount > 1)
-            {
-                // append segment number
-                SegmentFile.Append(wxString::Format(wxT(".part%02d"), (int)(i+1)));
-            }
-            if(OutputFormat.StartsWith(wxT("image2")))
-            {
-                // append image number placeholder
-                SegmentFile.Append(wxT(".%06d"));
-            }
-            SegmentFile.Append(wxT(".") + OutputFile.GetExt());
-
-            //SegmentFiles.Add(SegmentFile);
-
-            SegmentStart = wxEmptyString;
-            SegmentDuration = wxEmptyString;
-
-            if(SegmentCount > 0)
-            {
-                if(OutputSegments[i]->TimeFrom != OutputSegments[i]->TimeTo)
-                {
-                    SegmentStart = Libav::MilliToString(OutputSegments[i]->TimeFrom);
-                }
-                if(OutputSegments[i]->TimeFrom < OutputSegments[i]->TimeTo)
-                {
-                    SegmentDuration = Libav::MilliToString(OutputSegments[i]->TimeTo - OutputSegments[i]->TimeFrom);
-                }
-            }
-
-            if(TwoPass)
-            {
-                Commands.Add(GetCommandAVConv(SegmentFile, SegmentStart, SegmentDuration, FirstPass));
-                Commands.Add(GetCommandAVConv(SegmentFile, SegmentStart, SegmentDuration, SecondPass));
-            }
-            else
-            {
-                Commands.Add(GetCommandAVConv(SegmentFile, SegmentStart, SegmentDuration/*, NoPass*/));
-            }
-        }
+        Commands.Add(GetCommand(FirstPass));
+        Commands.Add(GetCommand(SecondPass));
     }
-
-    // TODO: merge files
-/*
-        if(FileSegmentConcat && SegmentCount > 1 && !FileFormat.StartsWith(wxT("image2")))
-        {
-            // FIXME: concat currently not possible with ffmpeg / avconv
-
-            // only join if not format.startswith("image2") because a sequence of image can't be joined to another sequence of images
-
-            // input format: FileFormat
-            // input files: SegmentFiles;
-            // output format: FileFormat
-            // output file: FileOut.GetFullPath()
-        }
+    else
+    {
+        Commands.Add(GetCommand(/* NoPass */));
     }
-*/
     return Commands;
 }
 
-wxString EncodingTask::GetCommandAVConv(wxString OutputFileName, wxString StartTime, wxString Duration, Pass PassNumber)
+wxString FileSegment::GetCommand(Pass PassNumber)
 {
     wxString Seperator = wxFileName::GetPathSeparator();
     wxString Command = wxT("\"") + Libav::ConverterApplication.GetFullPath() + wxT("\"");
 
     AVMediaFlags SupportedMediaFlags = Libav::FormatMediaMap[OutputFormat]; // AVMEDIA_FLAG_VIDEO
+
+    if(OutputFormat.StartsWith(wxT("image2")))
+    {
+        // append image number placeholder
+        OutputFile.SetName(OutputFile.GetName().Append(wxT(".%06d")));
+    }
+
+    wxString StartTime = wxEmptyString;
+    wxString Duration = wxEmptyString;
+    if(TimeFrom != TimeTo)
+    {
+        StartTime = Libav::MilliToString(TimeFrom);
+    }
+    if(TimeFrom < TimeTo)
+    {
+        Duration = Libav::MilliToString(TimeTo - TimeFrom);
+    }
 
     // input options
     //{
@@ -478,9 +425,49 @@ wxString EncodingTask::GetCommandAVConv(wxString OutputFileName, wxString StartT
         }
         else
         {
-            Command.Append(wxT(" -y \"") + OutputFileName + wxT("\""));
+            Command.Append(wxT(" -y \"") + OutputFile.GetFullPath() + wxT("\""));
         }
     //}
 
     return Command;
+}
+
+EncodingTask::EncodingTask()
+{
+    OutputSegmentsConcat = false;
+}
+
+EncodingTask::~EncodingTask()
+{
+    WX_CLEAR_ARRAY(OutputFileSegments);
+}
+
+wxArrayString EncodingTask::GetCommands()
+{
+    wxArrayString Commands;
+
+    if(BaseOutputFile.Mkdir(0755, wxPATH_MKDIR_FULL))
+    {
+        size_t SegmentCount = OutputFileSegments.GetCount();
+        for(size_t s=0; s<SegmentCount; s++)
+        {
+            OutputFileSegments[s]->OutputFile.SetPath(BaseOutputFile.GetPath());
+            OutputFileSegments[s]->OutputFile.SetExt(BaseOutputFile.GetExt());
+            OutputFileSegments[s]->OutputFile.SetName(BaseOutputFile.GetName());
+            if(SegmentCount > 1)
+            {
+                OutputFileSegments[s]->OutputFile.SetName(BaseOutputFile.GetName() + wxString::Format(wxT(".part%02d"), (int)(s+1)));
+            }
+
+            wxArrayString SegmentCommands = OutputFileSegments[s]->GetCommands();
+            for(size_t c=0; c<SegmentCommands.GetCount(); c++)
+            {
+                Commands.Add(SegmentCommands[c]);
+            }
+        }
+    }
+
+    // TODO: merge segment files
+
+    return Commands;
 }
