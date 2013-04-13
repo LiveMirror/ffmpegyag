@@ -1,5 +1,5 @@
 #include "EncodingFileLoader.h"
-#include <wx/msgdlg.h>
+
 static int CompareIndexEntry(IndexEntry** First, IndexEntry** Second)
 {
     return (int)((*First)->Timestamp - (*Second)->Timestamp);
@@ -504,6 +504,10 @@ void EncodingFileLoader::FlushBuffer()
         for(unsigned int i=0; i<pFormatCtx->nb_streams; i++)
         {
             if(pFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+            {
+                avcodec_flush_buffers(pFormatCtx->streams[i]->codec);
+            }
+            if(pFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO)
             {
                 avcodec_flush_buffers(pFormatCtx->streams[i]->codec);
             }
