@@ -733,8 +733,8 @@ VideoFrame* EncodingFileLoader::GetVideoFrameData(long VideoStreamIndex, long Fr
                         //printf("frame error\n");
                     }
                 }
+                av_free_packet(&packet);
             }
-            av_free_packet(&packet);
             sws_freeContext(pSwsCtx);
             av_free(Buffer);
         }
