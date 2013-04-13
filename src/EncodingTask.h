@@ -31,6 +31,7 @@ WX_DEFINE_ARRAY(FileSegment*, FileSegmentArray);
 // OutputFormat, InputSegments, TwoPass, RemoveMetadata, RemoveChapters
 // should moved into OutputSegment Structure so it could accessed by
 // EncodingTask->OutputSegments[SegmentIndex]->InputFiles[InputFileIndex]->VideoStreams[VideoStreamIndex].EncodingSettings
+//
 class EncodingTask
 {
     public: EncodingTask();
