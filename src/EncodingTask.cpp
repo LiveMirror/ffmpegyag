@@ -438,6 +438,26 @@ wxString EncodingTask::GetCommandAVConv(FileSegment* Segment, Pass PassNumber)
                                     VideoFilters.append(wxT("yadif=1"));
                                     append = true;
                                 }
+                                if(Segment->FilterVideoFadeIn > 0)
+                                {
+                                    if(append)
+                                    {
+                                        VideoFilters.append(wxT(","));
+                                    }
+                                    // TODO: check if filter command is correct
+                                    VideoFilters.append(wxString::Format(wxT("fade=%i")), Segment->FilterVideoFadeIn);
+                                    append = true;
+                                }
+                                if(Segment->FilterVideoFadeOut > 0)
+                                {
+                                    if(append)
+                                    {
+                                        VideoFilters.append(wxT(","));
+                                    }
+                                    // TODO: check if filter command is correct
+                                    VideoFilters.append(wxString::Format(wxT("fade=%i")), Segment->FilterVideoFadeOut);
+                                    append = true;
+                                }
 
                                 if(!VideoFilters.IsEmpty())
                                 {
