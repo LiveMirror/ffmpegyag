@@ -4,6 +4,7 @@
 #include "EncodingFileLoader.h"
 #include "EncodingFileSaver.h"
 
+// Impact on GUI higher than expected... Branch dropped
 enum Pass
 {
     NoPass, // No-Pass processing (default)
