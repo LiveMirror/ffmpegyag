@@ -16,13 +16,12 @@ class FileSegment
     public: FileSegment(int64_t StartTime, int64_t EndTime);
     public: virtual ~FileSegment();
 
-    //public: int64_t TimestampTo;
-    //public: int64_t TimestampFrom;
-    public: int64_t TimeTo; // end time in milli seconds
     public: int64_t TimeFrom; // start time in milli seconds
-    //public: wxString TimecodeTo;
-    //public: wxString TimecodeFrom;
-    //public: wxString TimecodeDuration;
+    public: int64_t TimeTo; // end time in milli seconds
+    public: int64_t FilterVideoFadeIn; // fade in time for video in milli seconds
+    public: int64_t FilterVideoFadeOut; // fade out time for video in milli seconds
+    public: int64_t FilterAudioFadeIn; // fade in time for audio in milli seconds
+    public: int64_t FilterAudioFadeOut; // fade out time for audio in milli seconds
 };
 
 WX_DEFINE_ARRAY(FileSegment*, FileSegmentArray);
