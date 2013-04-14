@@ -1707,7 +1707,7 @@ void AVConvGUIFrame::OnButtonSegmentAddClick(wxCommandEvent& event)
         int64_t time = EncodingTasks[TaskIndex]->InputFiles[StreamIndex.FileIndex]->GetTimeFromFrame((int)StreamIndex.StreamIndex, (long)SliderFrame->GetValue());
         long SegmentIndex = EncodingTasks[TaskIndex]->OutputSegments.GetCount();
 
-        EncodingTasks[TaskIndex]->OutputSegments.Add(new FileSegment(time, time));
+        EncodingTasks[TaskIndex]->OutputSegments.Add(new FileSegment(EncodingTasks[TaskIndex]->OutputFile, time, time));
 
         ListCtrlSegments->InsertItem(SegmentIndex, wxEmptyString);
         ListCtrlSegments->SetItem(SegmentIndex, 0, Libav::MilliToString(time));
