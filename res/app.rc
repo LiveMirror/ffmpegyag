@@ -1,0 +1,10 @@
+// application icon
+AAA ICON "app.ico"
+
+// native visual-style of controls (x86-win32 manifest)
+// embed this file to use ComCtl32.dll version 6
+// 1 -> exe, MANIFEST(=24) -> type
+1 MANIFEST "wx/msw/wx.manifest"
+
+// full native appearanace (cursors, icons, visual-style)
+//#include <wx/msw/wx.rc>

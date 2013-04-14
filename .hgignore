@@ -1,0 +1,15 @@
+syntax: glob
+*.o
+*.depend
+*.res
+*.deb
+*.tar.gz
+config_debug.sh
+make-*
+makefile*
+Makefile*
+*.bat
+*.cmd
+obj
+dist/linux/bin/ffmpegyag
+dist/msw/bin/ffmpegyag.exe
