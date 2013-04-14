@@ -5,10 +5,14 @@ FileSegment::FileSegment(wxFileName FileOut, int64_t StartTime, int64_t EndTime)
     OutputFile = FileOut;
     TimeTo = EndTime;
     TimeFrom = StartTime;
-    FilterVideoFadeIn = 0;
-    FilterVideoFadeOut= 0;
-    FilterAudioFadeIn = 0;
-    FilterAudioFadeOut = 0;
+    FilterVideoFadeInStart = 0;
+    FilterVideoFadeInDuration = 0;
+    FilterVideoFadeOutStart = 0;
+    FilterVideoFadeOutDuration = 0;
+    FilterAudioFadeInStart = 0.0;
+    FilterAudioFadeInDuration = 0.0;
+    FilterAudioFadeOutStart = 0.0;
+    FilterAudioFadeOutDuration = 0.0;
 }
 
 FileSegment::~FileSegment()
@@ -277,24 +281,22 @@ wxString EncodingTask::GetCommandAVConv(FileSegment* Segment, Pass PassNumber)
                                 wxString AudioFilters = wxEmptyString;
                                 bool append = false;
 
-                                if(Segment->FilterAudioFadeIn > 0)
+                                if(Segment->FilterAudioFadeInStart > 0 || Segment->FilterAudioFadeInDuration > 0)
                                 {
                                     if(append)
                                     {
                                         AudioFilters.append(wxT(","));
                                     }
-                                    // TODO: check if filter command is correct
-                                    AudioFilters.append(wxString::Format(wxT("afade=%i")), Segment->FilterAudioFadeIn);
+                                    AudioFilters.append(wxString::Format(wxT("afade=t=out:st=%.3f:d=%.3f")), Segment->FilterAudioFadeInStart, Segment->FilterAudioFadeInDuration);
                                     append = true;
                                 }
-                                if(Segment->FilterAudioFadeOut > 0)
+                                if(Segment->FilterAudioFadeOutStart > 0 || Segment->FilterAudioFadeOutDuration > 0)
                                 {
                                     if(append)
                                     {
                                         AudioFilters.append(wxT(","));
                                     }
-                                    // TODO: check if filter command is correct
-                                    AudioFilters.append(wxString::Format(wxT("afade=%i")), Segment->FilterAudioFadeOut);
+                                    AudioFilters.append(wxString::Format(wxT("afade=t=out:st=%.3f:d=%.3f")), Segment->FilterAudioFadeOutStart, Segment->FilterAudioFadeOutDuration);
                                     append = true;
                                 }
 
@@ -438,24 +440,22 @@ wxString EncodingTask::GetCommandAVConv(FileSegment* Segment, Pass PassNumber)
                                     VideoFilters.append(wxT("yadif=1"));
                                     append = true;
                                 }
-                                if(Segment->FilterVideoFadeIn > 0)
+                                if(Segment->FilterVideoFadeInStart > 0 || Segment->FilterVideoFadeInDuration > 0)
                                 {
                                     if(append)
                                     {
                                         VideoFilters.append(wxT(","));
                                     }
-                                    // TODO: check if filter command is correct
-                                    VideoFilters.append(wxString::Format(wxT("fade=%i")), Segment->FilterVideoFadeIn);
+                                    VideoFilters.append(wxString::Format(wxT("fade=in:%i:%i")), Segment->FilterVideoFadeInStart, Segment->FilterVideoFadeInDuration);
                                     append = true;
                                 }
-                                if(Segment->FilterVideoFadeOut > 0)
+                                if(Segment->FilterVideoFadeOutStart > 0 || Segment->FilterVideoFadeOutDuration > 0)
                                 {
                                     if(append)
                                     {
                                         VideoFilters.append(wxT(","));
                                     }
-                                    // TODO: check if filter command is correct
-                                    VideoFilters.append(wxString::Format(wxT("fade=%i")), Segment->FilterVideoFadeOut);
+                                    VideoFilters.append(wxString::Format(wxT("fade=out:%i:%i")), Segment->FilterVideoFadeOutStart, Segment->FilterVideoFadeOutDuration);
                                     append = true;
                                 }
 
