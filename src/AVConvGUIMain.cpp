@@ -1462,17 +1462,14 @@ void AVConvGUIFrame::RenderFrame()
         if(SelectedTaskIndices.GetCount() == 1 && SelectedVideoStreamIndices.GetCount() == 1)
         {
             long SelectedTask = SelectedTaskIndices[0];
+            // TODO: get the index of selected segment (if segment count > 0)
+            long SelectedSegment = 0;
             long SelectedStream = SelectedVideoStreamIndices[0].StreamIndex;
             long SelectedFrame = (long)SliderFrame->GetValue();
             EncodingFileLoader* efl = EncodingTasks[SelectedTask]->InputFiles[0];
 
             // BOTTLENECK
             VideoFrame* Texture = efl->GetVideoFrameData(SelectedStream, SelectedFrame, 512, 256); // width & height of texture must be of power 2
-            // TODO: apply segment settings
-            // i.e.
-            // fade in / fade out with black
-            // stroke out frames not belonging to this segment with red crossed lines
-            // ...
 
             if(Texture != NULL)
             {
@@ -1581,6 +1578,13 @@ void AVConvGUIFrame::RenderFrame()
 
                 // this will not free memory of Texture->Data
                 glDeleteTextures(1, &TexturePointer);
+
+                // TODO: add black overlay (pixel shader?) to tint texture depending on segment fade in/out
+                if(SelectedFrame >  && SelectedFrame < )
+                {
+                }
+
+                // TODO: draw red lines when frame does not belong to segment
             }
             else
             {
