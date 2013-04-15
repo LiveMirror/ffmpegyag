@@ -1468,6 +1468,11 @@ void AVConvGUIFrame::RenderFrame()
 
             // BOTTLENECK
             VideoFrame* Texture = efl->GetVideoFrameData(SelectedStream, SelectedFrame, 512, 256); // width & height of texture must be of power 2
+            // TODO: apply segment settings
+            // i.e.
+            // fade in / fade out with black
+            // stroke out frames not belonging to this segment with red crossed lines
+            // ...
 
             if(Texture != NULL)
             {
