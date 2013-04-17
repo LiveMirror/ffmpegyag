@@ -93,17 +93,6 @@ wxString EncodingTask::GetCommandAVConv(FileSegment* Segment, Pass PassNumber)
 
     AVMediaFlags SupportedMediaFlags = Libav::FormatMediaMap[OutputFormat]; // AVMEDIA_FLAG_VIDEO
 
-    wxString StartTime = wxEmptyString;
-    wxString Duration = wxEmptyString;
-    if(Segment->TimeFrom != Segment->TimeTo)
-    {
-        StartTime = Libav::MilliToString(Segment->TimeFrom);
-    }
-    if(Segment->TimeFrom < Segment->TimeTo)
-    {
-        Duration = Libav::MilliToString(Segment->TimeTo - Segment->TimeFrom);
-    }
-
     // input options
     //{
         //...
@@ -287,7 +276,7 @@ wxString EncodingTask::GetCommandAVConv(FileSegment* Segment, Pass PassNumber)
                                     {
                                         AudioFilters.append(wxT(","));
                                     }
-                                    AudioFilters.append(wxString::Format(wxT("afade=t=out:st=%.3f:d=%.3f")), Segment->FilterAudioFadeInStart, Segment->FilterAudioFadeInDuration);
+                                    AudioFilters.append(wxString::Format(wxT("afade=t=out:st=%.3f:d=%.3f")), (Segment->TimeFrom + Segment->FilterAudioFadeInStart), Segment->FilterAudioFadeInDuration);
                                     append = true;
                                 }
                                 if(Segment->FilterAudioFadeOutStart > 0 || Segment->FilterAudioFadeOutDuration > 0)
@@ -490,14 +479,13 @@ wxString EncodingTask::GetCommandAVConv(FileSegment* Segment, Pass PassNumber)
 
     // trim
     //{
-        if(!StartTime.IsEmpty())
+        if(Segment->TimeFrom != Segment->TimeTo)
         {
-            Command.Append(wxT(" -ss ") + StartTime);
+            Command.Append(wxT(" -ss ") + Libav::MilliToSMPTE(Segment->TimeFrom));
         }
-
-        if(!Duration.IsEmpty())
+        if(Segment->TimeFrom < Segment->TimeTo)
         {
-            Command.Append(wxT(" -t ") + Duration);
+            Command.Append(wxT(" -t ") + Libav::MilliToSMPTE(Segment->TimeTo - Segment->TimeFrom));
         }
     //}
 

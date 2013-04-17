@@ -907,7 +907,7 @@ void AVConvGUIFrame::OnButtonAddTaskClick(wxCommandEvent& event)
                 {
                     InsertIndex = ListCtrlTasks->GetItemCount();
                     ListCtrlTasks->InsertItem(InsertIndex, SourceFile.GetFullName());
-                    ListCtrlTasks->SetItem(InsertIndex, 1, Libav::MilliToString(InputFile->FileDuration).BeforeLast('.'));
+                    ListCtrlTasks->SetItem(InsertIndex, 1, Libav::MilliToSMPTE(InputFile->FileDuration).BeforeLast('.'));
                     ListCtrlTasks->SetItem(InsertIndex, 2, wxString::Format(wxT("%i MB"), (int)(InputFile->FileSize/1024/1024)));
 
                     EncTask = new EncodingTask();
@@ -1142,8 +1142,8 @@ void AVConvGUIFrame::OnListCtrlTasksItemSelect(wxListEvent& event)
             for(size_t i=0; i<EncodingTasks[TaskIndex]->OutputSegments.GetCount(); i++)
             {
                 ListCtrlSegments->InsertItem(i, wxEmptyString);
-                ListCtrlSegments->SetItem(i, 0, Libav::MilliToString(EncodingTasks[TaskIndex]->OutputSegments[i]->TimeFrom));
-                ListCtrlSegments->SetItem(i, 1, Libav::MilliToString(EncodingTasks[TaskIndex]->OutputSegments[i]->TimeTo));
+                ListCtrlSegments->SetItem(i, 0, Libav::MilliToSMPTE(EncodingTasks[TaskIndex]->OutputSegments[i]->TimeFrom));
+                ListCtrlSegments->SetItem(i, 1, Libav::MilliToSMPTE(EncodingTasks[TaskIndex]->OutputSegments[i]->TimeTo));
             }
 
             ComboBoxFileFormat->SetValue(FormatFromSetting(EncodingTasks[TaskIndex]->OutputFormat, STR_DEFAULT));
@@ -1474,7 +1474,7 @@ void AVConvGUIFrame::RenderFrame()
             if(Texture != NULL)
             {
                 // BOTTLENECK
-                TextCtrlTime->SetValue(Libav::MilliToString(Texture->Timecode) + wxT(" / ") + Libav::MilliToString(efl->VideoStreams[SelectedStream]->Duration) + wxT(" [") + Texture->GetPicType() + wxT("]"));
+                TextCtrlTime->SetValue(Libav::MilliToSMPTE(Texture->Timecode) + wxT(" / ") + Libav::MilliToSMPTE(efl->VideoStreams[SelectedStream]->Duration) + wxT(" [") + Texture->GetPicType() + wxT("]"));
 
                 int VideoWidth = efl->VideoStreams[SelectedStream]->Width;
                 int VideoHeight = efl->VideoStreams[SelectedStream]->Height;
@@ -1580,15 +1580,15 @@ void AVConvGUIFrame::RenderFrame()
                 glDeleteTextures(1, &TexturePointer);
 
                 // TODO: add black overlay (pixel shader?) to tint texture depending on segment fade in/out
-                if(SelectedFrame >  && SelectedFrame < )
-                {
-                }
+                //if(SelectedFrame >  && SelectedFrame < )
+                //{
+                //}
 
                 // TODO: draw red lines when frame does not belong to segment
             }
             else
             {
-                TextCtrlTime->SetValue(Libav::MilliToString(efl->GetTimeFromFrame(SelectedStream, SelectedFrame)) + wxT(" / ") + Libav::MilliToString(efl->VideoStreams[SelectedStream]->Duration) + wxT(" []"));
+                TextCtrlTime->SetValue(Libav::MilliToSMPTE(efl->GetTimeFromFrame(SelectedStream, SelectedFrame)) + wxT(" / ") + Libav::MilliToSMPTE(efl->VideoStreams[SelectedStream]->Duration) + wxT(" []"));
             }
 
             // dereference pointer (free is done by GOPBuffer)
@@ -1719,8 +1719,8 @@ void AVConvGUIFrame::OnButtonSegmentAddClick(wxCommandEvent& event)
         EncodingTasks[TaskIndex]->OutputSegments.Add(new FileSegment(EncodingTasks[TaskIndex]->OutputFile, time, time));
 
         ListCtrlSegments->InsertItem(SegmentIndex, wxEmptyString);
-        ListCtrlSegments->SetItem(SegmentIndex, 0, Libav::MilliToString(time));
-        ListCtrlSegments->SetItem(SegmentIndex, 1, Libav::MilliToString(time));
+        ListCtrlSegments->SetItem(SegmentIndex, 0, Libav::MilliToSMPTE(time));
+        ListCtrlSegments->SetItem(SegmentIndex, 1, Libav::MilliToSMPTE(time));
         ListCtrlSegments->SetItemState(SegmentIndex, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
     }
 
@@ -1764,7 +1764,7 @@ void AVConvGUIFrame::OnButtonSegmentFromClick(wxCommandEvent& event)
 
             EncodingTasks[TaskIndex]->OutputSegments[SegmentIndex]->TimeFrom = time;
 
-            ListCtrlSegments->SetItem(SegmentIndex, 0, Libav::MilliToString(time));
+            ListCtrlSegments->SetItem(SegmentIndex, 0, Libav::MilliToSMPTE(time));
         }
     }
 
@@ -1785,7 +1785,7 @@ void AVConvGUIFrame::OnButtonSegmentToClick(wxCommandEvent& event)
 
             EncodingTasks[TaskIndex]->OutputSegments[SegmentIndex]->TimeTo = time;
 
-            ListCtrlSegments->SetItem(SegmentIndex, 1, Libav::MilliToString(time));
+            ListCtrlSegments->SetItem(SegmentIndex, 1, Libav::MilliToSMPTE(time));
         }
     }
 
@@ -1912,7 +1912,7 @@ void AVConvGUIFrame::OnCheckListBoxVideoStreamsSelect(wxCommandEvent& event)
             VideoStream* vStream = EncodingTasks[TaskIndex]->InputFiles[VideoIndex.FileIndex]->VideoStreams[VideoIndex.StreamIndex];
             SliderFrame->SetValue(0);
             SliderFrame->SetRange(0, vStream->FrameCount); // keep additional frame that marks full duration of stream (last frame timestamp + last frame duration)
-            TextCtrlTime->SetValue(wxT("00:00:00.000 / ") + Libav::MilliToString(vStream->Duration) + wxT(" []"));
+            TextCtrlTime->SetValue(wxT("00:00:00.000 / ") + Libav::MilliToSMPTE(vStream->Duration) + wxT(" []"));
             if(vStream->EncodingSettings.Crop[0] > 0)
             {
                 SpinCtrlLeft->SetValue(vStream->EncodingSettings.Crop[3]);
@@ -2730,7 +2730,7 @@ void AVConvGUIFrame::OnButtonEncodeClick(wxCommandEvent& event)
                     LogFile.AddLine(stdtis->ReadLine());
                 }
                 */
-                StatusBar->SetStatusText(wxT("Time: ") + Libav::MilliToString((int64_t)(1000*(wxGetLocalTime()-StartTime))).BeforeLast('.'), 2);
+                StatusBar->SetStatusText(wxT("Time: ") + Libav::MilliToSMPTE((int64_t)(1000*(wxGetLocalTime()-StartTime))).BeforeLast('.'), 2);
 
                 wxYield();
             }

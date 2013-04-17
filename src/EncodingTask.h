@@ -23,10 +23,10 @@ class FileSegment
     public: int FilterVideoFadeInDuration; // fade in duration for video in frames
     public: int FilterVideoFadeOutStart; // fade out start 'global' frame (not influenced by segment start)
     public: int FilterVideoFadeOutDuration; // fade out duration for video in frames
-    public: float FilterAudioFadeInStart; // fade in start 'global' time in seconds (not influenced by segment start)
-    public: float FilterAudioFadeInDuration; // fade in duration for audio in seconds
-    public: float FilterAudioFadeOutStart; // fade out start 'global' time in seconds (not influenced by segment start)
-    public: float FilterAudioFadeOutDuration; // fade out duration for audio in seconds
+    public: int64_t FilterAudioFadeInStart; // fade in start time in milli seconds (not influenced by segment start)
+    public: int64_t FilterAudioFadeInDuration; // fade in duration for audio in milli seconds
+    public: int64_t FilterAudioFadeOutStart; // fade out start time in milli seconds (not influenced by segment start)
+    public: int64_t FilterAudioFadeOutDuration; // fade out duration for audio in milli seconds
 };
 
 WX_DEFINE_ARRAY(FileSegment*, FileSegmentArray);
