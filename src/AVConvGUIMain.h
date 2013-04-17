@@ -222,6 +222,7 @@ class AVConvGUIFrame: public wxFrame
         wxSpinCtrl* SpinCtrlLeft;
         wxStaticText* StaticText11;
         //*)
+        wxMenu* MenuMain;
         wxMenu* MenuPresets;
         wxMenu* MenuSegmentFilters;
 

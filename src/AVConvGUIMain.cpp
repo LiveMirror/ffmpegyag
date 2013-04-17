@@ -496,10 +496,26 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     FileDialogSaveFile = new wxFileDialog(this, _("Select file"), wxEmptyString, wxEmptyString, wxFileSelectorDefaultWildcardStr, wxFD_SAVE, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
     FlexGridSizer1->Fit(this);
     FlexGridSizer1->SetSizeHints(this);
-    MenuPresets = new wxMenu(_("Load Preset"));
-    MenuSegmentFilters = new wxMenu(_("Segment Filters"));
-    MenuSegmentFilters->Append(wxNewId(), _("Video Fade In/Out"));
-    MenuSegmentFilters->Append(wxNewId(), _("Audio Fade In/Out"));
+    MenuPresets = new wxMenu();
+    MenuSegmentFilters = new wxMenu();
+    MenuSegmentFilters->AppendSeparator();
+    MenuSegmentFilters->Append(-1, _("Video Filters"))->Enable(false);
+    MenuSegmentFilters->AppendSeparator();
+    MenuSegmentFilters->Append(VideoFadeIn, _("Video Fade-In"));
+    MenuSegmentFilters->Append(VideoFadeOut, _("Video Fade-Out"));
+    MenuSegmentFilters->AppendSeparator();
+    MenuSegmentFilters->Append(-1, _("Audio Filters"))->Enable(false);
+    MenuSegmentFilters->AppendSeparator();
+    MenuSegmentFilters->Append(AudioFadeIn, _("Audio Fade-In"));
+    MenuSegmentFilters->Append(AudioFadeOut, _("Audio Fade-Out"));
+    MenuMain = new wxMenu(_("Main Menu"));
+    MenuMain->Append(-1, _("Save Script"))->Enable(false);
+    MenuMain->AppendSeparator();
+    MenuMain->AppendSubMenu(MenuPresets, _("Load Preset"));
+    MenuMain->AppendSeparator();
+    MenuMain->Append(-1, _("Help"))->Enable(false);
+    MenuMain->Append(-1, _("About"))->Enable(false);
+    MenuMain->Append(-1, _("Exit"))->Enable(false);
     Center();
 
     Connect(ID_LISTCTRL1,wxEVT_COMMAND_LIST_ITEM_SELECTED,(wxObjectEventFunction)&AVConvGUIFrame::OnListCtrlTasksItemSelect);
@@ -2475,13 +2491,8 @@ void AVConvGUIFrame::OnMenuPresetsClick(wxCommandEvent& event)
 
 void AVConvGUIFrame::OnMainWindowRClick(wxMouseEvent& event)
 {
-    size_t count = 2;
-    if(MenuPresets->GetTitle().IsEmpty())
-    {
-        count = 0;
-    }
-    int id=0;
-    while(MenuPresets->GetMenuItemCount() > count)
+    int id = 0;
+    while(MenuPresets->GetMenuItemCount() > 0)
     {
         MenuPresets->Delete(id);
         id++;
@@ -2491,17 +2502,65 @@ void AVConvGUIFrame::OnMainWindowRClick(wxMouseEvent& event)
     {
         MenuPresets->Append(i, Presets[i]);
     }
-    this->PopupMenu(MenuPresets);
+    this->PopupMenu(MenuMain);
 }
 
 void AVConvGUIFrame::OnMenuSegmentFiltersClick(wxCommandEvent& event)
 {
-    wxMessageBox(MenuSegmentFilters->GetLabel(event.GetId()));
+    long SegmentIndex = ListCtrlSegments->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+    if(SelectedTaskIndices.GetCount() == 1 && SegmentIndex > -1)
+    {
+        FileSegment* Segment = EncodingTasks[SelectedTaskIndices[0]]->OutputSegments[SegmentIndex];
+        if(event.GetId() == VideoFadeIn)
+        {
+            wxTextEntryDialog win(NULL, wxT("Please enter the start time and the duration.\nValues must be seperated by : and in milli seconds.\nFrames before the start time are blacked out.\n\nExample:\nFade in from 5.0 over 2.5 seconds -> 5000:2500"), wxT("Video Fade-In"));
+            win.SetValue(wxString::Format(wxT("%lu:%lu"), (long)Segment->FilterVideoFadeInStart, (long)Segment->FilterVideoFadeInDuration));
+            if(win.ShowModal() == wxID_OK)
+            {
+                win.GetValue().BeforeFirst(':').ToLong((long*)&Segment->FilterVideoFadeInStart);
+                win.GetValue().AfterLast(':').ToLong((long*)&Segment->FilterVideoFadeInDuration);
+            }
+        }
+        if(event.GetId() == VideoFadeOut)
+        {
+            wxTextEntryDialog win(NULL, wxT("Please enter the start time and the duration.\nValues must be seperated by : and in milli seconds.\nFrames after the duration are blacked out.\n\nExample:\nFade out from 4773.8 over 2.7 seconds -> 4773800:2700"), wxT("Video Fade-Out"));
+            win.SetValue(wxString::Format(wxT("%lu:%lu"), (long)Segment->FilterVideoFadeOutStart, (long)Segment->FilterVideoFadeOutDuration));
+            if(win.ShowModal() == wxID_OK)
+            {
+                win.GetValue().BeforeFirst(':').ToLong((long*)&Segment->FilterVideoFadeOutStart);
+                win.GetValue().AfterLast(':').ToLong((long*)&Segment->FilterVideoFadeOutDuration);
+            }
+        }
+        if(event.GetId() == AudioFadeIn)
+        {
+            wxTextEntryDialog win(NULL, wxT("Please enter the start time and the duration.\nValues must be seperated by : and in milli seconds.\nSound before the start time is silenced.\n\nExample:\nFade in from 5.0 over 2.5 seconds -> 5000:2500"), wxT("Audio Fade-In"));
+            win.SetValue(wxString::Format(wxT("%lu:%lu"), (long)Segment->FilterAudioFadeInStart, (long)Segment->FilterAudioFadeInDuration));
+            if(win.ShowModal() == wxID_OK)
+            {
+                win.GetValue().BeforeFirst(':').ToLong((long*)&Segment->FilterAudioFadeInStart);
+                win.GetValue().AfterLast(':').ToLong((long*)&Segment->FilterAudioFadeInDuration);
+            }
+        }
+        if(event.GetId() == AudioFadeOut)
+        {
+            wxTextEntryDialog win(NULL, wxT("Please enter the start time and the duration.\nValues must be seperated by : and in milli seconds.\nSound after the duration is silenced.\n\nExample:\nFade out from 4773.8 over 2.7 seconds -> 4773800:2700"), wxT("Audio Fade-Out"));
+            win.SetValue(wxString::Format(wxT("%lu:%lu"), (long)Segment->FilterAudioFadeOutStart, (long)Segment->FilterAudioFadeOutDuration));
+            if(win.ShowModal() == wxID_OK)
+            {
+                win.GetValue().BeforeFirst(':').ToLong((long*)&Segment->FilterAudioFadeOutStart);
+                win.GetValue().AfterLast(':').ToLong((long*)&Segment->FilterAudioFadeOutDuration);
+            }
+        }
+        Segment = NULL;
+    }
 }
 
 void AVConvGUIFrame::OnListCtrlSegmentsRClick(wxMouseEvent& event)
 {
-    this->PopupMenu(MenuSegmentFilters);
+    if(SelectedTaskIndices.GetCount() == 1 && ListCtrlSegments->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) > -1)
+    {
+        this->PopupMenu(MenuSegmentFilters);
+    }
 }
 
 void AVConvGUIFrame::OnButtonScriptClick(wxCommandEvent& event)

@@ -435,8 +435,9 @@ wxString EncodingTask::GetCommandAVConv(FileSegment* Segment, Pass PassNumber)
                                     {
                                         VideoFilters.append(wxT(","));
                                     }
-                                    // FIXME: convert from milli seconds to frames
-                                    VideoFilters.append(wxString::Format(wxT("fade=t=in:s=%i:n=%i")), Segment->FilterVideoFadeInStart, Segment->FilterVideoFadeInDuration);
+                                    long FrameStart = InputFiles[f]->GetFrameFromTime(v, Segment->TimeFrom + Segment->FilterVideoFadeInStart);
+                                    long FrameEnd = InputFiles[f]->GetFrameFromTime(v, Segment->TimeFrom + Segment->FilterVideoFadeInStart + Segment->FilterVideoFadeInDuration);
+                                    VideoFilters.append(wxString::Format(wxT("fade=t=in:s=%lu:n=%lu"), FrameStart, FrameEnd - FrameStart));
                                     append = true;
                                 }
                                 if(Segment->FilterVideoFadeOutStart > 0 || Segment->FilterVideoFadeOutDuration > 0)
@@ -445,8 +446,9 @@ wxString EncodingTask::GetCommandAVConv(FileSegment* Segment, Pass PassNumber)
                                     {
                                         VideoFilters.append(wxT(","));
                                     }
-                                    // FIXME: convert from milli seconds to frames
-                                    VideoFilters.append(wxString::Format(wxT("fade=t=out:s=%i:n=%i")), Segment->FilterVideoFadeOutStart, Segment->FilterVideoFadeOutDuration);
+                                    long FrameStart = InputFiles[f]->GetFrameFromTime(v, Segment->TimeFrom + Segment->FilterVideoFadeOutStart);
+                                    long FrameEnd = InputFiles[f]->GetFrameFromTime(v, Segment->TimeFrom + Segment->FilterVideoFadeOutStart + Segment->FilterVideoFadeOutDuration);
+                                    VideoFilters.append(wxString::Format(wxT("fade=t=out:s=%lu:n=%lu"), FrameStart, FrameEnd - FrameStart));
                                     append = true;
                                 }
 
