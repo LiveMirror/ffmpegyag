@@ -497,6 +497,9 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     FlexGridSizer1->Fit(this);
     FlexGridSizer1->SetSizeHints(this);
     MenuPresets = new wxMenu(_("Load Preset"));
+    MenuSegmentFilters = new wxMenu(_("Segment Filters"));
+    MenuSegmentFilters->Append(wxNewId(), _("Video Fade In/Out"));
+    MenuSegmentFilters->Append(wxNewId(), _("Audio Fade In/Out"));
     Center();
 
     Connect(ID_LISTCTRL1,wxEVT_COMMAND_LIST_ITEM_SELECTED,(wxObjectEventFunction)&AVConvGUIFrame::OnListCtrlTasksItemSelect);
@@ -537,6 +540,8 @@ AVConvGUIFrame::AVConvGUIFrame(wxWindow* parent,wxWindowID id)
     GLCanvasPreview->Connect(wxEVT_SIZE,(wxObjectEventFunction)&AVConvGUIFrame::OnGLCanvasPreviewResize,0,this);
     MenuPresets->Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&AVConvGUIFrame::OnMenuPresetsClick, NULL, this);
     Connect(wxEVT_RIGHT_DOWN,(wxObjectEventFunction)&AVConvGUIFrame::OnMainWindowRClick);
+    MenuSegmentFilters->Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&AVConvGUIFrame::OnMenuSegmentFiltersClick, NULL, this);
+    Connect(ID_LISTCTRL2,wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&AVConvGUIFrame::OnListCtrlSegmentsRClick);
 
     ComboBoxFileFormat->SetValue(wxT("matroska"));
     ComboBoxVideoCodec->SetValue(wxT("libx264"));
@@ -553,7 +558,6 @@ AVConvGUIFrame::~AVConvGUIFrame()
     SelectedVideoStreamIndices.Clear();
     SelectedAudioStreamIndices.Clear();
     SelectedSubtitleStreamIndices.Clear();
-
     //(*Destroy(AVConvGUIFrame)
     //*)
 }
@@ -2487,7 +2491,17 @@ void AVConvGUIFrame::OnMainWindowRClick(wxMouseEvent& event)
     {
         MenuPresets->Append(i, Presets[i]);
     }
-    this->PopupMenu(MenuPresets, event.GetPosition());
+    this->PopupMenu(MenuPresets);
+}
+
+void AVConvGUIFrame::OnMenuSegmentFiltersClick(wxCommandEvent& event)
+{
+    wxMessageBox(MenuSegmentFilters->GetLabel(event.GetId()));
+}
+
+void AVConvGUIFrame::OnListCtrlSegmentsRClick(wxMouseEvent& event)
+{
+    this->PopupMenu(MenuSegmentFilters);
 }
 
 void AVConvGUIFrame::OnButtonScriptClick(wxCommandEvent& event)

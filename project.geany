@@ -1,3 +1,4 @@
+
 [file_prefs]
 final_new_line=true
 ensure_convert_new_lines=true
@@ -23,12 +24,7 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=4
-FILE_NAME_0=8590;C;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.h;0;4
-FILE_NAME_1=89796;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FAVConvGUIMain.cpp;0;4
-FILE_NAME_2=232;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingFileLoader.cpp;0;4
-FILE_NAME_3=1344;C;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingTask.h;0;4
-FILE_NAME_4=21270;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fffmpegyag%2Fsrc%2FEncodingTask.cpp;0;4
+current_page=0
 
 [VTE]
 last_dir=/home/ronny/Documents/development/ffmpegyag

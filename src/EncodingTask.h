@@ -19,13 +19,13 @@ class FileSegment
     wxFileName OutputFile; // file where the segment will be stored
     public: int64_t TimeFrom; // start time in milli seconds
     public: int64_t TimeTo; // end time in milli seconds
-    public: int FilterVideoFadeInStart; // fade in start 'global' frame (not influenced by segment start)
-    public: int FilterVideoFadeInDuration; // fade in duration for video in frames
-    public: int FilterVideoFadeOutStart; // fade out start 'global' frame (not influenced by segment start)
-    public: int FilterVideoFadeOutDuration; // fade out duration for video in frames
-    public: int64_t FilterAudioFadeInStart; // fade in start time in milli seconds (not influenced by segment start)
+    public: int64_t FilterVideoFadeInStart; // fade in start time in milli seconds (relative to segment start)
+    public: int64_t FilterVideoFadeInDuration; // fade in duration for video in milli seconds
+    public: int64_t FilterVideoFadeOutStart; // fade out start time in milli seconds (relative to segment start)
+    public: int64_t FilterVideoFadeOutDuration; // fade out duration for video in milli seconds
+    public: int64_t FilterAudioFadeInStart; // fade in start time in milli seconds (relative to segment start)
     public: int64_t FilterAudioFadeInDuration; // fade in duration for audio in milli seconds
-    public: int64_t FilterAudioFadeOutStart; // fade out start time in milli seconds (not influenced by segment start)
+    public: int64_t FilterAudioFadeOutStart; // fade out start time in milli seconds (relative to segment start)
     public: int64_t FilterAudioFadeOutDuration; // fade out duration for audio in milli seconds
 };
 
