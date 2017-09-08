@@ -4,9 +4,20 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "taskName": "Configure (Debian)",
+            "taskName": "Configure Release (Debian)",
             "type": "shell",
             "command": "./configure --prefix=/usr"
+        },
+        {
+            "taskName": "Configure Debug (Debian)",
+            "type": "shell",
+            "command": "./configure --config-debug"
+        },
+        {
+            "taskName": "Clean",
+            "type": "shell",
+            "command": "make clean",
+            "problemMatcher": []
         },
         {
             "taskName": "Build",
